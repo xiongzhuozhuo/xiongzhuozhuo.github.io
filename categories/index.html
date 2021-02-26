@@ -276,7 +276,7 @@
     
 
 
-    <div class="comments gitalk-container"></div>
+    <div class="comments" id="SOHUCS"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -338,26 +338,17 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.0/dist/gitalk.css">
-
-<script>
-NexT.utils.loadComments('.gitalk-container', () => {
-  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/gitalk@1.7.0/dist/gitalk.min.js', () => {
-    var gitalk = new Gitalk({
-      clientID    : 'd0484527e3a2131a4b1c',
-      clientSecret: 'ba2a41a64d6e6321a043f7a783e0d4f7791b5b92',
-      repo        : 'next_blog_comment',
-      owner       : 'xiongzhuozhuo',
-      admin       : ['xiongzhuozhuo'],
-      id          : 'a676607444a8bc8b150c9a3aff884e61',
-      proxy       : 'https://netnr-proxy.cloudno.de/https://github.com/login/oauth/access_token',
-        language: '',
-      distractionFreeMode: true
+  <script>
+  NexT.utils.loadComments('#SOHUCS', () => {
+    NexT.utils.getScript('https://changyan.sohu.com/upload/changyan.js', () => {
+      window.changyan.api.config({
+        appid: 'cyvkmiP62',
+        conf : 'f835963bde21c00f5de8da387f64e40a'
+      });
     });
-    gitalk.render(document.querySelector('.gitalk-container'));
-  }, window.Gitalk);
-});
-</script>
+  });
+  </script>
+  <script src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
 
 </body>
 </html>
