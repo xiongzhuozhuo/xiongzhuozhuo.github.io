@@ -23,20 +23,34 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"github.com","root":"/","images":"/images","scheme":"Gemini","version":"8.2.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
-<meta name="description" content="测试文件">
+<meta name="description" content="图床上传">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="https://github.com/xiongzhuozhuo/xiongzhuozhuo.github.io/2021/02/23/hello-world/index.html">
+<meta property="og:title" content="个人分享平台构建(工具篇)——Typora + PicGo + Gitee">
+<meta property="og:url" content="https://github.com/xiongzhuozhuo/xiongzhuozhuo.github.io/2021/03/05/%E4%B8%AA%E4%BA%BA%E5%88%86%E4%BA%AB%E5%B9%B3%E5%8F%B0%E6%9E%84%E5%BB%BA(%E5%B7%A5%E5%85%B7%E7%AF%87)%E2%80%94%E2%80%94Typora+PicGo+Gitee/index.html">
 <meta property="og:site_name" content="XiongZhuo">
-<meta property="og:description" content="测试文件">
+<meta property="og:description" content="图床上传">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-02-23T14:10:51.145Z">
-<meta property="article:modified_time" content="2021-02-26T05:15:05.256Z">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305161628.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305140341.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305140622.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305141040.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305144104.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305145414.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305145931.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305150117.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305150333.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305151539.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305151955.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305152932.png">
+<meta property="article:published_time" content="2021-03-05T05:38:00.378Z">
+<meta property="article:modified_time" content="2021-03-05T08:21:07.990Z">
 <meta property="article:author" content="软糖豆人">
+<meta property="article:tag" content="Typora + PicGo + Gitee">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305161628.png">
 
 
-<link rel="canonical" href="https://github.com/xiongzhuozhuo/xiongzhuozhuo.github.io/2021/02/23/hello-world/">
+<link rel="canonical" href="https://github.com/xiongzhuozhuo/xiongzhuozhuo.github.io/2021/03/05/%E4%B8%AA%E4%BA%BA%E5%88%86%E4%BA%AB%E5%B9%B3%E5%8F%B0%E6%9E%84%E5%BB%BA(%E5%B7%A5%E5%85%B7%E7%AF%87)%E2%80%94%E2%80%94Typora+PicGo+Gitee/">
 
 
 <script class="page-configurations">
@@ -48,7 +62,7 @@
     lang   : 'zh-CN'
   };
 </script>
-<title>Hello World | XiongZhuo</title>
+<title>个人分享平台构建(工具篇)——Typora + PicGo + Gitee | XiongZhuo</title>
   
 
 
@@ -193,7 +207,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-Start"><span class="nav-number">1.</span> <span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-a-new-post"><span class="nav-number">1.1.</span> <span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run-server"><span class="nav-number">1.2.</span> <span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generate-static-files"><span class="nav-number">1.3.</span> <span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy-to-remote-sites"><span class="nav-number">1.4.</span> <span class="nav-text">Deploy to remote sites</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text"></span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.</span> <span class="nav-text">工具介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Typora"><span class="nav-number">1.1.1.</span> <span class="nav-text">Typora</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PicGo"><span class="nav-number">1.1.2.</span> <span class="nav-text">PicGo</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Gitee"><span class="nav-number">1.1.3.</span> <span class="nav-text">Gitee</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">工具配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E9%85%8D%E7%BD%AEGitee"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.配置Gitee</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E9%85%8D%E7%BD%AEPicGo"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.配置PicGo</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E9%85%8D%E7%BD%AETypora"><span class="nav-number">1.2.3.</span> <span class="nav-text">3.配置Typora</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%B5%8B%E8%AF%95"><span class="nav-number">1.3.</span> <span class="nav-text">运行测试</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -222,7 +236,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -285,7 +299,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://github.com/xiongzhuozhuo/xiongzhuozhuo.github.io/2021/02/23/hello-world/">
+    <link itemprop="mainEntityOfPage" href="https://github.com/xiongzhuozhuo/xiongzhuozhuo.github.io/2021/03/05/%E4%B8%AA%E4%BA%BA%E5%88%86%E4%BA%AB%E5%B9%B3%E5%8F%B0%E6%9E%84%E5%BB%BA(%E5%B7%A5%E5%85%B7%E7%AF%87)%E2%80%94%E2%80%94Typora+PicGo+Gitee/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/candy.png">
@@ -298,7 +312,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Hello World
+          个人分享平台构建(工具篇)——Typora + PicGo + Gitee
         </h1>
 
         <div class="post-meta-container">
@@ -308,16 +322,19 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2021-02-23 22:10:51" itemprop="dateCreated datePublished" datetime="2021-02-23T22:10:51+08:00">2021-02-23</time>
+      <time title="创建时间：2021-03-05 13:38:00 / 修改时间：16:21:07" itemprop="dateCreated datePublished" datetime="2021-03-05T13:38:00+08:00">2021-03-05</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-02-26 13:15:05" itemprop="dateModified" datetime="2021-02-26T13:15:05+08:00">2021-02-26</time>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
       </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%8A%9E%E5%85%AC%E6%8A%80%E8%83%BD/" itemprop="url" rel="index"><span itemprop="name">办公技能</span></a>
+        </span>
+    </span>
 
   
     <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -336,8 +353,8 @@
       <span class="post-meta-item-text">Changyan：</span>
     
     
-      <a title="changyan" href="/2021/02/23/hello-world/#SOHUCS" itemprop="discussionUrl">
-        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2021/02/23/hello-world/" itemprop="commentCount"></span>
+      <a title="changyan" href="/2021/03/05/%E4%B8%AA%E4%BA%BA%E5%88%86%E4%BA%AB%E5%B9%B3%E5%8F%B0%E6%9E%84%E5%BB%BA(%E5%B7%A5%E5%85%B7%E7%AF%87)%E2%80%94%E2%80%94Typora+PicGo+Gitee/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2021/03/05/个人分享平台构建(工具篇)——Typora+PicGo+Gitee/" itemprop="commentCount"></span>
       </a>
     
   </span>
@@ -350,7 +367,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>367</span>
+      <span>994</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -361,7 +378,7 @@
     </span>
 </div>
 
-            <div class="post-description">测试文件</div>
+            <div class="post-description">图床上传</div>
         </div>
       </header>
 
@@ -369,19 +386,47 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+        <h2 id=""><a href="#" class="headerlink" title=""></a></h2><p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305161628.png" alt="个人分享平台构建"></p>
+<span id="more"></span>
+<h3 id="工具介绍"><a href="#工具介绍" class="headerlink" title="工具介绍"></a>工具介绍</h3><h4 id="Typora"><a href="#Typora" class="headerlink" title="Typora"></a><a target="_blank" rel="noopener" href="https://www.typora.io/">Typora</a></h4><p>​    <strong>Typora</strong>是一个所见即所得的Markdown格式文本编辑器，支持Windows、macOS和GNU/Linux操作系统，包括对GitHub Flavored Markdown扩展格式的支持、拼写检查、自定义CSS样式、数学公式渲染（通过MathJax）等特性，<a target="_blank" rel="noopener" href="https://www.typora.io/">点击跳转下载</a>，软件截图如下：</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305140341.png" alt="image-20210305140336396" style="zoom: 50%;" />
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<h4 id="PicGo"><a href="#PicGo" class="headerlink" title="PicGo"></a><a href="https://github.com/Molunerfinn/PicGo/releases/tag/v2.3.0-beta.4">PicGo</a></h4><p>​    我们在写作、写 Markdown、博客时，经常都要插入图片。然而要贴图 (上传图片) 时还得登录图床网站/服务器去手工上传和复制链接，操作比较繁琐。</p>
+<p>​    <strong>PicGo</strong> 是一款开源跨平台的免费图片上传工具以及图床相册管理软件，它能帮你快速地将图片上传到微博、又拍云、阿里云 OSS、腾讯云 COS、七牛、GitHub、sm.ms、Imgur 等常见的免费图床网站或云存储服务上，并自动复制图片的链接到剪贴板里，使用上非常高效便捷。<a href="https://github.com/Molunerfinn/PicGo/releases/tag/v2.3.0-beta.4">点击跳转下载</a>，软件截图如下：</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305140622.png" alt="image-20210305140621282" style="zoom: 50%;" />
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<h4 id="Gitee"><a href="#Gitee" class="headerlink" title="Gitee"></a><a target="_blank" rel="noopener" href="https://gitee.com/">Gitee</a></h4><p>​    <strong>Gitee</strong>是深圳市奥思网络科技有限公司推出的代码托管平台，支持Git和SVN，提供免费的私有仓库托管。目前开发者超过500万，托管项目超过1000万，汇聚几乎所有本土原创开源项目，并于2016年推出企业版，提供企业级代码托管服务。<a target="_blank" rel="noopener" href="https://gitee.com/">点击跳转官网</a>进行Gitee账户注册。</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305141040.png" alt="image-20210305141038648" style="zoom: 25%;" />
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<h3 id="工具配置"><a href="#工具配置" class="headerlink" title="工具配置"></a>工具配置</h3><p>​    Typora作为一款Markdown编辑器，搭配图床工具PicGo以及托管平台Gitee，能够简洁高效的编写图文并茂的博客。按照链接==<strong>下载好Typora、PicGo并注册Gitee账号后</strong>==，下面进入配置环节。</p>
+<h4 id="1-配置Gitee"><a href="#1-配置Gitee" class="headerlink" title="1.配置Gitee"></a>1.配置Gitee</h4><p>【创建仓库】</p>
+<p>​    点击头像右侧“+”，【新建仓库】——填写【仓库名称】——是否开源选择【公开】（如果不公开，PicGo上传之后的图片无法在Typora中通过网络地址进行显示）——【创建】</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305144104.png" alt="image-20210305144102602" style="zoom: 67%;" />
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+<p>【生成私人令牌】</p>
+<p>​    点击头像，【设置】——【私人令牌】——【生成新令牌】——填写令牌描述【提交】，复制令牌</p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305145414.png" alt="image-20210305145412307"></p>
+<h4 id="2-配置PicGo"><a href="#2-配置PicGo" class="headerlink" title="2.配置PicGo"></a>2.配置PicGo</h4><p><a target="_blank" rel="noopener" href="https://nodejs.org/zh-cn/">点击下载node.js</a>，为安装插件做准备</p>
+<p>【插件设置】——下载gitee插件</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305145931.png" alt="image-20210305145929348" style="zoom: 50%;" />
+
+<p>【PicGo设置】——开启Gitee图床——开启【时间戳重命名】</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305150117.png" alt="image-20210305150114651" style="zoom:50%;" />
+
+<p>【图床设置】——Gitee图床设置</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305150333.png" alt="image-20210305150331034" style="zoom:50%;" />
+
+<h4 id="3-配置Typora"><a href="#3-配置Typora" class="headerlink" title="3.配置Typora"></a>3.配置Typora</h4><p>【文件】——【偏好设置】——【图像】，PicGo路径为当前电脑安装路径</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305151539.png" alt="image-20210305151537874" style="zoom:50%;" />
+
+<p>【验证图片上传选项】</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305151955.png" alt="image-20210305151953065" style="zoom: 67%;" />
+
+<h3 id="运行测试"><a href="#运行测试" class="headerlink" title="运行测试"></a>运行测试</h3><p>​    运行PicGo，运行Typora，插入图片进行测试。右键插入的图片，点击【上传图片】，上传成功，并能正确显示，完成测试</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305152932.png" style="zoom:25%;" />
+
+
+
 
     </div>
 
@@ -435,16 +480,19 @@
   </div>
 </div>
 
+          <div class="post-tags">
+              <a href="/tags/Typora-PicGo-Gitee/" rel="tag"># Typora + PicGo + Gitee</a>
+          </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
+                <a href="/2021/02/26/%E8%AE%BE%E7%BD%AEhexo%E9%A6%96%E9%A1%B5%E5%8F%AA%E6%98%BE%E7%A4%BA%E9%83%A8%E5%88%86%E6%91%98%E8%A6%81/" rel="prev" title="Hexo首页显示摘要">
+                  <i class="fa fa-chevron-left"></i> Hexo首页显示摘要
+                </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2021/02/25/MarkDown/" rel="next" title="MarkDown">
-                  MarkDown <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -499,13 +547,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">1k</span>
+    <span title="站点总字数">2k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1 分钟</span>
+    <span title="站点阅读时长">2 分钟</span>
   </span>
 </div>
 <div class="busuanzi-count">
