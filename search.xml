@@ -1559,10 +1559,11 @@
   </entry>
   <entry>
     <title>02-Java基本语法（上）</title>
-    <url>/2021/08/14/02-Java%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95%EF%BC%88%E4%B8%8A%EF%BC%89%EF%BC%9A%E5%8F%98%E9%87%8F%E4%B8%8E%E8%BF%90%E7%AE%97%E7%AC%A6/</url>
+    <url>/2021/08/14/02-Java%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95%EF%BC%88%E4%B8%8A%EF%BC%89/</url>
     <content><![CDATA[<h2 id=""><a href="#" class="headerlink" title=""></a></h2><span id="more"></span>
+
 <h3 id="02-Java基本语法（上）：变量与运算符"><a href="#02-Java基本语法（上）：变量与运算符" class="headerlink" title="02-Java基本语法（上）：变量与运算符"></a>02-Java基本语法（上）：变量与运算符</h3><h4 id="1-关键字和保留字"><a href="#1-关键字和保留字" class="headerlink" title="1. 关键字和保留字"></a>1. 关键字和保留字</h4><ul>
-<li>关键字(keyword)的定义和特点<ul>
+<li>关键字(keyword)的定义和特点 <ul>
 <li>定义：被Java语言赋予了特殊含义，用做专门用途的字符串（单词）</li>
 <li>特点：关键字中所有字母都为小写</li>
 <li>官方地址： <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html">https://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html</a></li>
@@ -1891,6 +1892,265 @@
 <p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108141507310.png" alt="image-20210814150746972"></p>
 </li>
 </ul>
+]]></content>
+      <categories>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>02-Java基本语法（下）</title>
+    <url>/2021/08/14/02-Java%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95%EF%BC%88%E4%B8%8B%EF%BC%89/</url>
+    <content><![CDATA[<span id="more"></span>
+
+<h3 id="02—Java基本语法（下）：程序流程控制"><a href="#02—Java基本语法（下）：程序流程控制" class="headerlink" title="02—Java基本语法（下）：程序流程控制"></a>02—Java基本语法（下）：程序流程控制</h3><h4 id="1-程序流程控制"><a href="#1-程序流程控制" class="headerlink" title="1. 程序流程控制"></a>1. 程序流程控制</h4><ul>
+<li>流程控制语句是用来控制程序中各语句执行顺序的语句，可以把语句组 合成能完成一定功能的小逻辑模块。</li>
+<li>其流程控制方式采用结构化程序设计中规定的三种基本流程结构，即：<ul>
+<li>顺序结构<ul>
+<li>程序从上到下逐行地执行，中间没有任何判断和跳转。</li>
+</ul>
+</li>
+<li>分支结构<ul>
+<li>根据条件，选择性地执行某段代码。</li>
+<li>有if…else和switch-case两种分支语句。</li>
+</ul>
+</li>
+<li>循环结构<ul>
+<li>根据循环条件，重复性的执行某段代码。</li>
+<li>有while、do…while、for三种循环语句。</li>
+<li>注：JDK1.5提供了foreach循环，方便的遍历集合、数组元素。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-顺序结构"><a href="#2-顺序结构" class="headerlink" title="2. 顺序结构"></a>2. 顺序结构</h4><p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108141315615.png" alt="image-20210814131528560"> </p>
+<h4 id="3-分支结构"><a href="#3-分支结构" class="headerlink" title="3. 分支结构"></a>3. 分支结构</h4><h5 id="3-1-if-else结构"><a href="#3-1-if-else结构" class="headerlink" title="3.1 if-else结构"></a>3.1 if-else结构</h5><p>if语句三种格式：</p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108141316077.png" alt="image-20210814131652242"> <img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108141318452.png" alt="屏幕截图 2021-08-14 131738" style="zoom:80%;" /></p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108141319828.png" alt="屏幕截图 2021-08-14 131909"></p>
+<h5 id="3-2-switch-case结构"><a href="#3-2-switch-case结构" class="headerlink" title="3.2 switch-case结构"></a>3.2 switch-case结构</h5><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">switch</span>(表达式)&#123;</span><br><span class="line">	<span class="keyword">case</span> 常量<span class="number">1</span>:</span><br><span class="line">			语句<span class="number">1</span>;</span><br><span class="line">		<span class="comment">// break;</span></span><br><span class="line">	<span class="keyword">case</span> 常量<span class="number">2</span>:</span><br><span class="line">			语句<span class="number">2</span>;</span><br><span class="line">		<span class="comment">// break;</span></span><br><span class="line">		… …</span><br><span class="line">	<span class="keyword">case</span> 常量N:</span><br><span class="line">			语句N;</span><br><span class="line">		<span class="comment">// break;</span></span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		语句;</span><br><span class="line">		<span class="comment">// break;</span></span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108141322212.png" alt="image-20210814132242055"></p>
+<p>switch语句有关规则</p>
+<ul>
+<li>switch(表达式)中表达式的值必须是下述几种类型之一：byte，short， char，int，枚举 (jdk 5.0)，String (jdk 7.0)；</li>
+<li>case子句中的值必须是常量，不能是变量名或不确定的表达式值；</li>
+<li>同一个switch语句，所有case子句中的常量值互不相同；</li>
+<li>break语句用来在执行完一个case分支后使程序跳出switch语句块；如 果没有break，程序会顺序执行到switch结尾</li>
+<li>default子句是可任选的。同时，位置也是灵活的。当没有匹配的case时， 执行default</li>
+</ul>
+<h4 id="4-循环结构"><a href="#4-循环结构" class="headerlink" title="4.循环结构"></a>4.循环结构</h4><h5 id="4-1-for循环"><a href="#4-1-for循环" class="headerlink" title="4.1 for循环"></a>4.1 for循环</h5><ul>
+<li><p>语法格式</p>
+<p>for (①初始化部分; ②循环条件部分; ④迭代部分)｛ </p>
+<p>​         ③循环体部分; </p>
+<p>｝</p>
+</li>
+<li><p>执行过程：</p>
+<p>①-②-③-④-②-③-④-②-③-④-…..-②</p>
+</li>
+<li><p>说明：</p>
+<ul>
+<li><p>②循环条件部分为boolean类型表达式，当值为false时，退出循环</p>
+</li>
+<li><p>①初始化部分可以声明多个变量，但必须是同一个类型，用逗号分隔</p>
+</li>
+<li><p>④可以有多个变量更新，用逗号分隔</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108141928696.png" alt="image-20210814192817184" style="zoom:80%;" />
+
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="4-2-while循环"><a href="#4-2-while循环" class="headerlink" title="4.2 while循环"></a>4.2 while循环</h5><ul>
+<li><p>语法格式</p>
+<p>①初始化部分 </p>
+<p>while(②循环条件部分)｛ </p>
+<p>​             ③循环体部分; </p>
+<p>​             ④迭代部分;</p>
+<p> }</p>
+</li>
+<li><p>执行过程：</p>
+<p>①-②-③-④-②-③-④-②-③-④-…-②</p>
+</li>
+<li><p>说明：</p>
+<ul>
+<li>注意不要忘记声明④迭代部分。否则，循环将不能结束，变成死循环。</li>
+<li>for循环和while循环可以相互转换</li>
+</ul>
+</li>
+</ul>
+<h5 id="4-3-do-while循环"><a href="#4-3-do-while循环" class="headerlink" title="4.3 do-while循环"></a>4.3 do-while循环</h5><ul>
+<li><p>语法格式</p>
+<p>①初始化部分; </p>
+<p>do{ </p>
+<p>​        ③循环体部分 </p>
+<p>​        ④迭代部分 }while(②循环条件部分);</p>
+</li>
+<li><p>执行过程：①-==③-④==-②-③-④-②-③-④-…②</p>
+</li>
+<li><p>说明：do-while循环至少执行一次循环体。</p>
+</li>
+</ul>
+<h4 id="5-特殊关键字的使用：-break、continue"><a href="#5-特殊关键字的使用：-break、continue" class="headerlink" title="5. 特殊关键字的使用： break、continue"></a>5. 特殊关键字的使用： break、continue</h4><h5 id="5-1-特殊流程控制语句1"><a href="#5-1-特殊流程控制语句1" class="headerlink" title="5.1 特殊流程控制语句1"></a>5.1 特殊流程控制语句1</h5><ul>
+<li><p>break 语句</p>
+<ul>
+<li><p>break语句用于终止某个语句块的执行 </p>
+<p>{ …… </p>
+<p>​    break; </p>
+<p>​    …… </p>
+<p>}</p>
+</li>
+<li><p>break语句出现在多层嵌套的语句块中时，可以通过标签指明要终止的是哪一层语句块</p>
+<p>label1: { …… </p>
+<p>label2:         { …… </p>
+<p>label3:                 { …… </p>
+<p>​                                    break label2; </p>
+<p>​                                    …… </p>
+<p>​                                }</p>
+<p>​                         } </p>
+<p>​                 }</p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="5-2-特殊流程控制语句2"><a href="#5-2-特殊流程控制语句2" class="headerlink" title="5.2 特殊流程控制语句2"></a>5.2 特殊流程控制语句2</h5><ul>
+<li>continue 语句<ul>
+<li>continue只能使用在循环结构中</li>
+<li>continue语句用于跳过其所在循环语句块的一次执行，继续下一次循环</li>
+<li>continue语句出现在多层嵌套的循环语句体中时，可以通过标签指明要跳过的是哪一层循环</li>
+</ul>
+</li>
+</ul>
+<h5 id="5-3-特殊流程控制语句3"><a href="#5-3-特殊流程控制语句3" class="headerlink" title="5.3 特殊流程控制语句3"></a>5.3 特殊流程控制语句3</h5><ul>
+<li>return：并非专门用于结束循环的，它的功能是结束一个方法。 当一个方法执行到一个return语句时，这个方法将被结束。</li>
+<li>与break和continue不同的是，return直接结束整个方法，不管这个return处于多少层循环之内</li>
+<li>break只能用于switch语句和循环语句中。</li>
+<li>continue 只能用于循环语句中。</li>
+<li>二者功能类似，但continue是终止本次循环，==break是终止本层循环。==</li>
+<li>break、continue之后不能有其他的语句，因为程序永远不会执行其后的语句。</li>
+<li>标号语句必须紧接在循环的头部。标号语句不能用在非循环语句的前面。</li>
+<li>很多语言都有goto语句，goto语句可以随意将控制转移到程序中的任意一条 语句上，然后执行它。但使程序容易出错。Java中的break和continue是不同 于goto的。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>03-数组</title>
+    <url>/2021/08/14/03%E2%80%94%E6%95%B0%E7%BB%84/</url>
+    <content><![CDATA[<span id="more"></span>
+
+<h3 id="03—数组"><a href="#03—数组" class="headerlink" title="03—数组"></a>03—数组</h3><h4 id="1-数组的概述"><a href="#1-数组的概述" class="headerlink" title="1. 数组的概述"></a>1. 数组的概述</h4><ul>
+<li>数组(Array)，是多个相同类型数据按一定顺序排列 的集合，并使用一个名字命名，并通过编号的方式 对这些数据进行统一管理。</li>
+<li>数组的常见概念<ul>
+<li>数组名</li>
+<li>下标(或索引)</li>
+<li>元素</li>
+<li>数组的长度</li>
+</ul>
+</li>
+<li>数组本身是==引用数据类型==，而数组中的元素可以是==任何数据类型==，包括 基本数据类型和引用数据类型。</li>
+<li>创建数组对象会在内存中开辟一整块连续的空间，而数组名中引用的是这块连续空间的首地址。</li>
+<li>数组的==长度一旦确定，就不能修改。==</li>
+<li>我们可以直接通过下标(或索引)的方式调用指定位置的元素，速度很快。</li>
+<li>数组的分类：<ul>
+<li>按照维度：一维数组、二维数组、三维数组、…</li>
+<li>按照元素的数据类型分：基本数据类型元素的数组、引用数据类型元素的数组(即对 象数组)</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-一维数组"><a href="#2-一维数组" class="headerlink" title="2. 一维数组"></a>2. 一维数组</h4><h5 id="2-1-声明"><a href="#2-1-声明" class="headerlink" title="2.1 声明"></a>2.1 声明</h5><ul>
+<li>一维数组的声明方式： type var[] 或 type[] var；<ul>
+<li>例如<ul>
+<li>int a[]; </li>
+<li>int[] a1; </li>
+<li>double b[]; </li>
+<li>String[] c; //引用类型变量数组</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Java语言中声明数组时不能指定其长度(数组中元素的数)， 例如： int a[5]; //非法</li>
+</ul>
+<h5 id="2-2-初始化"><a href="#2-2-初始化" class="headerlink" title="2.2 初始化"></a>2.2 初始化</h5><ul>
+<li><p>动态初始化：数组声明且为数组元素分配空间与赋值的操作分开进行</p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108142020501.png" alt="image-20210814202012456"></p>
+</li>
+<li><p>静态初始化：在定义数组的同时就为数组元素分配空间并赋值。</p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108142022292.png" alt="image-20210814202203908"></p>
+</li>
+</ul>
+<h5 id="2-3-数组元素的引用"><a href="#2-3-数组元素的引用" class="headerlink" title="2.3 数组元素的引用"></a>2.3 数组元素的引用</h5><ul>
+<li><p>定义并用运算符new为之分配空间后，才可以引用数组中的每个元素；</p>
+</li>
+<li><p>数组元素的引用方式：数组名[数组元素下标]</p>
+<ul>
+<li>数组元素下标可以是整型常量或==整型表达式==。如a[3] , b[i] , c[6*i];</li>
+<li>数组元素下标从0开始；长度为n的数组合法下标取值范围: 0 —&gt;n-1；如int a[]=new  int[3]; 可引用的数组元素为a[0]、a[1]、a[2]</li>
+</ul>
+</li>
+<li><p>每个数组都有一个属性length指明它的长度，例如：a.length 指明数组a的长度(元素个数)</p>
+<ul>
+<li>数组一旦初始化，其长度是不可变的</li>
+</ul>
+</li>
+<li><p>数组是引用类型，它的元素相当于类的成员变量，因此数组一经 分配空间，其中的每个元素也被按照成员变量同样的方式被隐式 初始化。例如：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String argv[])</span></span>&#123;</span><br><span class="line">		<span class="keyword">int</span> a[]= <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">5</span>];</span><br><span class="line">		System.out.println(a[<span class="number">3</span>]); <span class="comment">//a[3]的默认值为0</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>对于基本数据类型而言，默认初始化值各有不同</p>
+</li>
+<li><p>对于引用数据类型而言，默认初始化值为null(注意与0不同！)</p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108142045181.png" alt="image-20210814204510834"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-4-一维数组的使用"><a href="#2-4-一维数组的使用" class="headerlink" title="2.4 一维数组的使用"></a>2.4 一维数组的使用</h5><ul>
+<li><p>Java中使用关键字new来创建数组</p>
+</li>
+<li><p>如下是创建基本数据类型元素的一维数组</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span>&#123;</span><br><span class="line">		<span class="keyword">int</span>[] s;<span class="comment">//⭐</span></span><br><span class="line">		s = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">10</span>];</span><br><span class="line">		<span class="keyword">for</span> ( <span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">10</span>; i++ ) &#123;</span><br><span class="line">			s[i] =<span class="number">2</span>*i+<span class="number">1</span>;</span><br><span class="line">			System.out.println(s[i]);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108142055841.png" alt="image-20210814205542408"> </p>
+</li>
+<li><p>创建基本数据类型数组 (2)</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span>&#123;</span><br><span class="line">		<span class="keyword">int</span>[] s;</span><br><span class="line">		s = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">10</span>];<span class="comment">//⭐</span></span><br><span class="line">		<span class="comment">//int[] s=new int[10];</span></span><br><span class="line">		<span class="comment">//基本数据类型数组在显式赋值之前，</span></span><br><span class="line">		<span class="comment">//Java会自动给他们赋默认值。</span></span><br><span class="line">		<span class="keyword">for</span> ( <span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">10</span>; i++ ) &#123;</span><br><span class="line">			s[i] =<span class="number">2</span>*i+<span class="number">1</span>;</span><br><span class="line">			System.out.println(s[i]);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108142101509.png" alt="image-20210814210132161"></p>
+</li>
+<li><p>创建基本数据类型数组 (3)</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span>&#123;</span><br><span class="line">		<span class="keyword">int</span>[] s;</span><br><span class="line">		s = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">10</span>];</span><br><span class="line">		<span class="keyword">for</span> ( <span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">10</span>; i++ ) &#123;</span><br><span class="line">			s[i] =<span class="number">2</span>*i+<span class="number">1</span>;<span class="comment">//⭐</span></span><br><span class="line">			System.out.println(s[i]);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>内存结构</strong></p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108142105646.png" alt="image-20210814210534290"></p>
+<p><strong>一维数组内存解析</strong></p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108142114758.png" alt="屏幕截图 2021-08-14 211401"></p>
+</li>
+</ul>
+<h4 id="3-多维数组的使用"><a href="#3-多维数组的使用" class="headerlink" title="3. 多维数组的使用"></a>3. 多维数组的使用</h4><p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108142116543.png" alt="image-20210814211605498"></p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108142116877.png" alt="image-20210814211632843"></p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108142117692.png" alt="image-20210814211737151"></p>
+<p><strong>二维数组内存解析</strong></p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108142118788.png" alt="image-20210814211812263"></p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108142121628.png" alt="image-20210814212133388"></p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108142121935.png" alt="image-20210814212153112"></p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108142122194.png" alt="image-20210814212212578"></p>
+<h4 id="4-Arrys工具类的使用"><a href="#4-Arrys工具类的使用" class="headerlink" title="4. Arrys工具类的使用"></a>4. Arrys工具类的使用</h4><p>java.util.Arrays类即为操作数组的工具类，包含了用来操作数组（比 如排序和搜索）的各种方法。</p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108142140195.png" alt="image-20210814213814165"></p>
+<ul>
+<li><p>java.util.Arrays类的sort()方法提供了数组元素排序功能：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SortTest</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">int</span> [] numbers = &#123;<span class="number">5</span>,<span class="number">900</span>,<span class="number">1</span>,<span class="number">5</span>,<span class="number">77</span>,<span class="number">30</span>,<span class="number">64</span>,<span class="number">700</span>&#125;;</span><br><span class="line">		Arrays.sort(numbers);</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numbers.length; i++)&#123;</span><br><span class="line">			System.out.println(numbers[i]);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="5-数组使用中的常见异常"><a href="#5-数组使用中的常见异常" class="headerlink" title="5. 数组使用中的常见异常"></a>5. 数组使用中的常见异常</h4><p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108142148445.png" alt="image-20210814214839629"></p>
 ]]></content>
       <categories>
         <category>编程</category>
