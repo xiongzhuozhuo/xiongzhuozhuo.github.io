@@ -1,6 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>个人分享平台构建（前导篇）——Markdown基础语法</title>
+    <url>/2021/02/25/%E4%B8%AA%E4%BA%BA%E5%88%86%E4%BA%AB%E5%B9%B3%E5%8F%B0%E6%9E%84%E5%BB%BA(%E5%89%8D%E5%AF%BC%E7%AF%87)%E2%80%94%E2%80%94Markdown%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/</url>
+    <content><![CDATA[<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305161628.png" alt="个人分享平台构建"></p>
+<h1 id="MarkDown常用语法"><a href="#MarkDown常用语法" class="headerlink" title="MarkDown常用语法"></a>MarkDown常用语法</h1><p><a href="https://www.bilibili.com/video/av87982836#reply2366896129">基础视频讲解链接</a><br><a href="https://www.bilibili.com/video/av88551739/">画图视频讲解链接</a></p>
+<span id="more"></span>
+<p>本篇为前导教程，帮助大家了解Markdown的基础语法 ，Markdown是一种轻量级标记语言，创始人为约翰·格鲁伯（英语：John Gruber）。它允许人们使用易读易写的纯文本格式编写文档，然后转换成有效的XHTML（或者HTML）文档。这种语言吸收了很多在电子邮件中已有的纯文本标记的特性。<br>由于Markdown的轻量化、易读易写特性，并且对于图片，图表、数学式都有支持，许多网站都广泛使用Markdown来撰写帮助文档或是用于论坛上发表消息。如GitHub、Reddit、Diaspora、Stack Exchange、OpenStreetMap 、SourceForge、简书等，甚至还能被使用来撰写电子书。了解Markdown语法规则有利于大家后期个人博客的撰写。</p>
+<h2 id="语块及标识"><a href="#语块及标识" class="headerlink" title="语块及标识"></a>语块及标识</h2><h3 id="代码块"><a href="#代码块" class="headerlink" title="代码块"></a>代码块</h3><figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="code">```语言名称</span></span><br><span class="line"><span class="code">```(英文输入法下输入)</span></span><br></pre></td></tr></table></figure>
+<h3 id="行内代码"><a href="#行内代码" class="headerlink" title="行内代码"></a>行内代码</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">`行内代码`</span><br></pre></td></tr></table></figure>
+<h3 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">&gt;一级引用</span><br><span class="line">&gt;&gt;二级引用</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h3 id="分割线"><a href="#分割线" class="headerlink" title="分割线"></a>分割线</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">***  或  ---  或  ___</span><br></pre></td></tr></table></figure>
+<h2 id="文字效果"><a href="#文字效果" class="headerlink" title="文字效果"></a>文字效果</h2><h3 id="标题"><a href="#标题" class="headerlink" title="标题"></a>标题</h3><figure class="highlight"><table><tr><td class="code"><pre><span class="line"># 标题名字 （#个数代表标题级数）</span><br></pre></td></tr></table></figure>
+<h3 id="加粗"><a href="#加粗" class="headerlink" title="加粗"></a>加粗</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">**文本**  或  __文本__</span><br><span class="line">__(英文输入法下 Shift + -)</span><br></pre></td></tr></table></figure>
+<h3 id="斜体"><a href="#斜体" class="headerlink" title="斜体"></a>斜体</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">*文本*  或  _文本_</span><br></pre></td></tr></table></figure>
+<h3 id="加粗斜体"><a href="#加粗斜体" class="headerlink" title="加粗斜体"></a>加粗斜体</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">***文本***  或  ___文本___</span><br></pre></td></tr></table></figure>
+<h3 id="下划线"><a href="#下划线" class="headerlink" title="下划线"></a>下划线</h3><figure class="highlight"><table><tr><td class="code"><pre><span class="line">&lt;u&gt;文本&lt;/u&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="删除线"><a href="#删除线" class="headerlink" title="删除线"></a>删除线</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">~~文字~~</span><br></pre></td></tr></table></figure>
+<h3 id="在Typora下需勾选扩展语法的效果"><a href="#在Typora下需勾选扩展语法的效果" class="headerlink" title="在Typora下需勾选扩展语法的效果"></a>在Typora下需勾选扩展语法的效果</h3><h3 id="高亮"><a href="#高亮" class="headerlink" title="高亮"></a>高亮</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">==文本== （Typora下需勾选扩展语法)</span><br></pre></td></tr></table></figure>
+<h4 id="下标"><a href="#下标" class="headerlink" title="下标"></a>下标</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">水 H~<span class="number">2</span>~O</span><br><span class="line">双氧水 H~<span class="number">2</span>~O~<span class="number">2</span>~</span><br></pre></td></tr></table></figure>
+<h4 id="上标"><a href="#上标" class="headerlink" title="上标"></a>上标</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">面积 m^<span class="number">2</span>^</span><br><span class="line">体积 m^<span class="number">3</span>^</span><br></pre></td></tr></table></figure>
+<h3 id="表情符号"><a href="#表情符号" class="headerlink" title="表情符号"></a>表情符号</h3><p>😁😀 （win标 + ;)</p>
+<h2 id="跳转"><a href="#跳转" class="headerlink" title="跳转"></a>跳转</h2><h3 id="外部跳转"><a href="#外部跳转" class="headerlink" title="外部跳转"></a>外部跳转</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">[描述](网址)</span><br></pre></td></tr></table></figure>
+<h3 id="内部跳转"><a href="#内部跳转" class="headerlink" title="内部跳转"></a>内部跳转</h3><figure class="highlight"><table><tr><td class="code"><pre><span class="line">[描述]（#标题）</span><br></pre></td></tr></table></figure>
+<h3 id="自动链接"><a href="#自动链接" class="headerlink" title="自动链接"></a>自动链接</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">&lt;网址&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h2><h3 id="本地图片"><a href="#本地图片" class="headerlink" title="本地图片"></a>本地图片</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">![图片描述](图片本地地址)</span><br></pre></td></tr></table></figure>
+<h3 id="网络图片"><a href="#网络图片" class="headerlink" title="网络图片"></a>网络图片</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">![图片描述](图片网络地址)</span><br></pre></td></tr></table></figure>
+<h2 id="表"><a href="#表" class="headerlink" title="表"></a>表</h2><h3 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h3><h4 id="无序表"><a href="#无序表" class="headerlink" title="无序表"></a>无序表</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">* 可以使用“*”作为标记</span><br><span class="line">+ 也可以使用“+”</span><br><span class="line">- 或者“-”</span><br></pre></td></tr></table></figure>
+<h4 id="有序表"><a href="#有序表" class="headerlink" title="有序表"></a>有序表</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">数字.空格</span><br><span class="line"><span class="number">1.</span> 有序表以数字和<span class="string">&#x27;.&#x27;</span>开始</span><br><span class="line"><span class="number">4.</span> 数字序列不会影响生成序列</span><br><span class="line"><span class="number">5</span>\. 数字\. 取消显示为列表</span><br></pre></td></tr></table></figure>
+<h3 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">使用|来分隔不同单元格，使用-来分隔表头和其他行,使用:来设置对齐</span><br><span class="line">姓名 | 年龄</span><br><span class="line">-- | --</span><br><span class="line">张三 | <span class="number">12</span></span><br><span class="line">李四 | <span class="number">23</span></span><br></pre></td></tr></table></figure>
+
+
+]]></content>
+      <categories>
+        <category>办公技能</category>
+      </categories>
+      <tags>
+        <tag>MarkDown</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>个人分享平台构建(工具篇)——Typora + PicGo + Gitee</title>
+    <url>/2021/03/05/%E4%B8%AA%E4%BA%BA%E5%88%86%E4%BA%AB%E5%B9%B3%E5%8F%B0%E6%9E%84%E5%BB%BA(%E5%B7%A5%E5%85%B7%E7%AF%87)%E2%80%94%E2%80%94Typora+PicGo+Gitee/</url>
+    <content><![CDATA[<h2 id=""><a href="#" class="headerlink" title=""></a></h2><p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305161628.png" alt="个人分享平台构建"></p>
+<span id="more"></span>
+<h3 id="工具介绍"><a href="#工具介绍" class="headerlink" title="工具介绍"></a>工具介绍</h3><h4 id="Typora"><a href="#Typora" class="headerlink" title="Typora"></a><a href="https://www.typora.io/">Typora</a></h4><p>​    <strong>Typora</strong>是一个所见即所得的Markdown格式文本编辑器，支持Windows、macOS和GNU/Linux操作系统，包括对GitHub Flavored Markdown扩展格式的支持、拼写检查、自定义CSS样式、数学公式渲染（通过MathJax）等特性，<a href="https://www.typora.io/">点击跳转下载</a>，软件截图如下：</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305140341.png" alt="image-20210305140336396" style="zoom: 50%;" />
+
+<h4 id="PicGo"><a href="#PicGo" class="headerlink" title="PicGo"></a><a href="https://github.com/Molunerfinn/PicGo/releases/tag/v2.3.0-beta.4">PicGo</a></h4><p>​    我们在写作、写 Markdown、博客时，经常都要插入图片。然而要贴图 (上传图片) 时还得登录图床网站/服务器去手工上传和复制链接，操作比较繁琐。</p>
+<p>​    <strong>PicGo</strong> 是一款开源跨平台的免费图片上传工具以及图床相册管理软件，它能帮你快速地将图片上传到微博、又拍云、阿里云 OSS、腾讯云 COS、七牛、GitHub、sm.ms、Imgur 等常见的免费图床网站或云存储服务上，并自动复制图片的链接到剪贴板里，使用上非常高效便捷。<a href="https://github.com/Molunerfinn/PicGo/releases/tag/v2.3.0-beta.4">点击跳转下载</a>，软件截图如下：</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305140622.png" alt="image-20210305140621282" style="zoom: 50%;" />
+
+<h4 id="Gitee"><a href="#Gitee" class="headerlink" title="Gitee"></a><a href="https://gitee.com/">Gitee</a></h4><p>​    <strong>Gitee</strong>是深圳市奥思网络科技有限公司推出的代码托管平台，支持Git和SVN，提供免费的私有仓库托管。目前开发者超过500万，托管项目超过1000万，汇聚几乎所有本土原创开源项目，并于2016年推出企业版，提供企业级代码托管服务。<a href="https://gitee.com/">点击跳转官网</a>进行Gitee账户注册。</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305141040.png" alt="image-20210305141038648" style="zoom: 25%;" />
+
+<h3 id="工具配置"><a href="#工具配置" class="headerlink" title="工具配置"></a>工具配置</h3><p>​    Typora作为一款Markdown编辑器，搭配图床工具PicGo以及托管平台Gitee，能够简洁高效的编写图文并茂的博客。按照链接==<strong>下载好Typora、PicGo并注册Gitee账号后</strong>==，下面进入配置环节。</p>
+<h4 id="1-配置Gitee"><a href="#1-配置Gitee" class="headerlink" title="1.配置Gitee"></a>1.配置Gitee</h4><p>【创建仓库】</p>
+<p>​    点击头像右侧“+”，【新建仓库】——填写【仓库名称】——是否开源选择【公开】（如果不公开，PicGo上传之后的图片无法在Typora中通过网络地址进行显示）——【创建】</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305144104.png" alt="image-20210305144102602" style="zoom: 67%;" />
+
+<p>【生成私人令牌】</p>
+<p>​    点击头像，【设置】——【私人令牌】——【生成新令牌】——填写令牌描述【提交】，复制令牌</p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305145414.png" alt="image-20210305145412307"></p>
+<h4 id="2-配置PicGo"><a href="#2-配置PicGo" class="headerlink" title="2.配置PicGo"></a>2.配置PicGo</h4><p><a href="https://nodejs.org/zh-cn/">点击下载node.js</a>，为安装插件做准备</p>
+<p>【插件设置】——下载gitee插件</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305145931.png" alt="image-20210305145929348" style="zoom: 50%;" />
+
+<p>【PicGo设置】——开启Gitee图床——开启【时间戳重命名】</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305150117.png" alt="image-20210305150114651" style="zoom:50%;" />
+
+<p>【图床设置】——Gitee图床设置</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305150333.png" alt="image-20210305150331034" style="zoom:50%;" />
+
+<h4 id="3-配置Typora"><a href="#3-配置Typora" class="headerlink" title="3.配置Typora"></a>3.配置Typora</h4><p>【文件】——【偏好设置】——【图像】，PicGo路径为当前电脑安装路径</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305151539.png" alt="image-20210305151537874" style="zoom:50%;" />
+
+<p>【验证图片上传选项】</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305151955.png" alt="image-20210305151953065" style="zoom: 67%;" />
+
+<h3 id="运行测试"><a href="#运行测试" class="headerlink" title="运行测试"></a>运行测试</h3><p>​    运行PicGo，运行Typora，插入图片进行测试。右键插入的图片，点击【上传图片】，上传成功，并能正确显示，完成测试</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305152932.png" style="zoom:25%;" />
+
+
+
+]]></content>
+      <categories>
+        <category>办公技能</category>
+      </categories>
+      <tags>
+        <tag>Typora + PicGo + Gitee</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>01-Java语言概述</title>
     <url>/2021/08/14/01-Java%E8%AF%AD%E8%A8%80%E6%A6%82%E8%BF%B0/</url>
     <content><![CDATA[<h2 id=""><a href="#" class="headerlink" title=""></a></h2><span id="more"></span>
@@ -250,443 +341,10 @@
 </ul>
 ]]></content>
       <categories>
-        <category>Java</category>
+        <category>编程</category>
       </categories>
       <tags>
         <tag>Java</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>02-Java基本语法（上）</title>
-    <url>/2021/08/14/02-Java%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95%EF%BC%88%E4%B8%8A%EF%BC%89%EF%BC%9A%E5%8F%98%E9%87%8F%E4%B8%8E%E8%BF%90%E7%AE%97%E7%AC%A6/</url>
-    <content><![CDATA[<h2 id=""><a href="#" class="headerlink" title=""></a></h2><span id="more"></span>
-<h3 id="02-Java基本语法（上）：变量与运算符"><a href="#02-Java基本语法（上）：变量与运算符" class="headerlink" title="02-Java基本语法（上）：变量与运算符"></a>02-Java基本语法（上）：变量与运算符</h3><h4 id="1-关键字和保留字"><a href="#1-关键字和保留字" class="headerlink" title="1. 关键字和保留字"></a>1. 关键字和保留字</h4><ul>
-<li>关键字(keyword)的定义和特点<ul>
-<li>定义：被Java语言赋予了特殊含义，用做专门用途的字符串（单词）</li>
-<li>特点：关键字中所有字母都为小写</li>
-<li>官方地址： <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html">https://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html</a></li>
-<li><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108141129301.png" alt="image-20210814112941844" style="zoom:150%;" /></li>
-<li>保留字(reserved word)<ul>
-<li>Java保留字：现有Java版本尚未使用，但以后版本可能会作为关键字使 用。自己命名标识符时要避免使用这些保留字 goto 、const</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h4 id="2-标识符"><a href="#2-标识符" class="headerlink" title="2. 标识符"></a>2. 标识符</h4><ul>
-<li>标识符：<ul>
-<li>Java 对各种==变量、方法和类==等要素命名时使用的字符序列称为标识符</li>
-<li>==技巧：凡是自己可以起名字的地方都叫标识符。==</li>
-</ul>
-</li>
-<li>定义合法标识符规则：<ul>
-<li>由26个英文字母大小写，0-9 ，_或 $ 组成</li>
-<li>数字不可以开头。</li>
-<li>不可以使用关键字和保留字，但能包含关键字和保留字。</li>
-<li>Java中严格区分大小写，长度无限制。</li>
-<li>标识符不能包含空格。</li>
-</ul>
-</li>
-<li>==Java中的名称规范==<ul>
-<li>包名：多个单词组成时，所有字母都小写：xxxyyyzzz</li>
-<li>类名、接口名：多单词组成时，所有单词的首字母都大写：XxxYyyZzz</li>
-<li>变量名、方法名：多单词组成时，第一个单词首字母小写，第二个单词开始每个单词首字母大写：xxxYyyZzz</li>
-<li>常量名：所有字母都大写。多个单词时每个单词用下划线链接：XXX_YYY_ZZZ</li>
-</ul>
-</li>
-</ul>
-<h4 id="3-变量"><a href="#3-变量" class="headerlink" title="3. 变量"></a>3. 变量</h4><ul>
-<li><p>变量的概念：</p>
-<ul>
-<li>内存中的一个存储区域</li>
-<li>该区域的数据可以在同一类型范围内不断变化</li>
-<li>变量是程序中最基本的存储单元。包含==变量类型、变量名和存储的值==</li>
-</ul>
-</li>
-<li><p>变量的作用：</p>
-<ul>
-<li>用于在内存中保存数据</li>
-</ul>
-</li>
-<li><p>使用变量注意：</p>
-<ul>
-<li>==Java中的每个变量必须先声明，后使用==</li>
-<li>使用变量名来访问这块区域的数据</li>
-<li>变量的作用域：其定义所在的一对{}内</li>
-<li>变量只在其作用域内才有效</li>
-<li>同一个作用域内不能定义重名的变量</li>
-</ul>
-</li>
-<li><p>声明变量</p>
-<ul>
-<li>语法：&lt;数据类型&gt;&lt;变量名&gt;</li>
-<li>例如：int var</li>
-</ul>
-</li>
-<li><p>变量的赋值</p>
-<ul>
-<li>语法：&lt;变量名称&gt; = &lt;值&gt;</li>
-<li>例如：var = 10;</li>
-</ul>
-</li>
-<li><p>声明和赋值变量</p>
-<ul>
-<li>语法： &lt;数据类型&gt; &lt;变量名&gt; = &lt;初始化值&gt;</li>
-<li>例如：int var = 10;</li>
-</ul>
-</li>
-<li><p>变量的分类</p>
-<ul>
-<li><p>按数据类型：对于每一种数据都定义了明确的具体数据类型（强类型语言），在内存中分 配了不同大小的内存空间。</p>
-<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108141215072.png" alt="image-20210814121537925"></p>
-</li>
-<li><p>按声明的位置的不同</p>
-<p>在方法体外，类体内声明的变量称为成员变量。在方法体内部声明的变量称为局部变量。</p>
-<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108141217923.png" alt="image-20210814121706483"></p>
-<p>注意：二者在初始化值方面的异同:同：都有生命周期 异：局部变量除形参外，需显式初始化。</p>
-</li>
-<li><p>整数类型：byte、short、int、long</p>
-<ul>
-<li><p>Java各整数类型有固定的表数范围和字段长度，不受具体OS的影响，以保 证java程序的可移植性。</p>
-</li>
-<li><p>java的整型常量默认为 int 型，声明long型常量须后加‘l’或‘L’</p>
-</li>
-<li><p>java程序中变量通常声明为int型，除非不足以表示较大的数，才使用long</p>
-<table>
-<thead>
-<tr>
-<th>类 型</th>
-<th>占用存储空间</th>
-<th>表数范围</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>byte</td>
-<td>1字节=8bit位</td>
-<td>-128 ~ 127</td>
-</tr>
-<tr>
-<td>short</td>
-<td>2字节</td>
-<td>-2^15^ ~2^15^ -1</td>
-</tr>
-<tr>
-<td>int</td>
-<td>4字节</td>
-<td>-2^31^ ~ 2^31^ -1 (约21亿)</td>
-</tr>
-<tr>
-<td>long</td>
-<td>8字节</td>
-<td>-2^63^ ~ 2^63^ -1</td>
-</tr>
-</tbody></table>
-<p>500MB 1MB = 1024KB 1KB= 1024B B= byte ? bit? bit: 计算机中的最小存储单位。byte:计算机中基本存储单元。</p>
-</li>
-</ul>
-</li>
-<li><p>浮点类型：float、double</p>
-<ul>
-<li><p>与整数类型类似，Java 浮点类型也有固定的表数范围和字段长度，不受具体操作 系统的影响。</p>
-</li>
-<li><p>浮点型常量有两种表示形式：</p>
-<ul>
-<li>十进制数形式：如：5.12 512.0f .512 (必须有小数点）</li>
-<li>科学计数法形式:如：5.12e2 512E2 100E-2</li>
-</ul>
-</li>
-<li><p>float:单精度，尾数可以精确到7位有效数字。很多情况下，精度很难满足需求。 double:双精度，精度是float的两倍。通常采用此类型。</p>
-</li>
-<li><p>Java 的浮点型常量默认为double型，声明float型常量，须后加‘f’或‘F’。</p>
-<table>
-<thead>
-<tr>
-<th>类 型</th>
-<th>占用存储空间</th>
-<th>表数范围</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>单精度float</td>
-<td>4字节</td>
-<td>-3.403E38 ~ 3.403E38</td>
-</tr>
-<tr>
-<td>双精度double</td>
-<td>8字节</td>
-<td>-1.798E308 ~ 1.798E308</td>
-</tr>
-</tbody></table>
-</li>
-</ul>
-</li>
-<li><p>字符类型：char</p>
-<ul>
-<li><p>char 型数据用来表示通常意义上“字符”(2字节)</p>
-</li>
-<li><p>Java中的所有字符都使用Unicode编码，故一个字符可以存储一个字 母，一个汉字，或其他书面语的一个字符。</p>
-</li>
-<li><p>字符型变量的三种表现形式：</p>
-<ul>
-<li><p>字符常量是用单引号(‘ ’)括起来的单个字符。例如：char c1 = ‘a’; char c2  = ‘中’; char c3 = ‘9’;</p>
-</li>
-<li><p>Java中还允许使用转义字符‘\’来将其后的字符转变为特殊字符型常量。 例如：char c3 = ‘\n’; // ‘\n’表示换行符</p>
-<table>
-<thead>
-<tr>
-<th>转义字符</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>\b</td>
-<td>退格键</td>
-</tr>
-<tr>
-<td>\n</td>
-<td>换行符</td>
-</tr>
-<tr>
-<td>\r</td>
-<td>回车符</td>
-</tr>
-<tr>
-<td>\t</td>
-<td>制表符</td>
-</tr>
-<tr>
-<td>\“</td>
-<td>双引号</td>
-</tr>
-<tr>
-<td>\‘</td>
-<td>单引号</td>
-</tr>
-<tr>
-<td>\\</td>
-<td>反斜线</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>直接使用 Unicode 值来表示字符型常量：‘\uXXXX’。其中，XXXX代表 一个十六进制整数。如：\u000a 表示 \n。</p>
-</li>
-<li><p>char类型是可以进行运算的。因为它都对应有Unicode码。</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>布尔类型：boolean</p>
-<ul>
-<li>boolean 类型用来判断逻辑条件，一般用于程序流程控制：<ul>
-<li>if条件控制语句；</li>
-<li>while循环控制语句；</li>
-<li>do-while循环控制语句；</li>
-<li>for循环控制语句；</li>
-</ul>
-</li>
-<li>boolean类型数据只允许取值true和false，无null。<ul>
-<li>不可以使用0或非 0 的整数替代false和true，这点和C语言不同。</li>
-<li>Java虚拟机中没有任何供boolean值专用的字节码指令，Java语言表达所操作的 boolean值，在编译之后都使用java虚拟机中的int数据类型来代替：true用1表示，false 用0表示。———《java虚拟机规范 8版》</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>基本数据类型转换</p>
-<ul>
-<li><p>自动类型转换：容量小的类型自动转换为容量大的数据类型。数据类型按容 量大小排序为：</p>
-<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108141234328.png" alt="image-20210814123431947"></p>
-</li>
-<li><p>有多种类型的数据混合运算时，系统首先自动将所有数据转换成容量最大的 那种数据类型，然后再进行计算。</p>
-</li>
-<li><p>byte,short,char之间不会相互转换，他们三者在计算时首先转换为int类型。</p>
-</li>
-<li><p>boolean类型不能与其它数据类型运算。</p>
-</li>
-<li><p>当把任何基本数据类型的值和字符串(String)进行连接运算时(+)，基本数据类 型的值将自动转化为字符串(String)类型。</p>
-</li>
-</ul>
-</li>
-<li><p>字符串类型：String</p>
-<ul>
-<li><p>String不是基本数据类型，属于引用数据类型</p>
-</li>
-<li><p>使用方式与基本数据类型一致。例如：String str = “abcd”;</p>
-</li>
-<li><p>一个字符串可以串接另一个字符串，也可以直接串接其他类型的数据。例如：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">str = str + “xyz” ; </span><br><span class="line"><span class="keyword">int</span> n = <span class="number">100</span>;</span><br><span class="line">str = str + n;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-<li><p>强制类型转换</p>
-<ul>
-<li>自动类型转换的逆过程，将容量大的数据类型转换为容量小的数据类型。使 用时要加上强制转换符：()，但可能造成精度降低或溢出,格外要注意。</li>
-<li>通常，字符串不能直接转换为基本类型，但通过基本类型对应的包装类则可 以实现把字符串转换成基本类型。</li>
-<li>如： String a = “43”; int i = Integer.parseInt(a);</li>
-<li>boolean类型不可以转换为其它的数据类型。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h4 id="4-运算符"><a href="#4-运算符" class="headerlink" title="4. 运算符"></a>4. 运算符</h4><ul>
-<li><p>算数运算符<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108141250720.png" alt="image-20210814125009358"></p>
-<ul>
-<li>算术运算符的注意问题<ul>
-<li>如果对负数取模，可以把模数负号忽略不记，如：5%-2=1。 但被模数是 负数则不可忽略。此外，取模运算的结果不一定总是整数。</li>
-<li>对于除号“/”，它的整数除和小数除是有区别的：整数之间做除法时，只 保留整数部分而舍弃小数部分。 例如：int x=3510;x=x/1000*1000; </li>
-<li>“+”除字符串相加功能外，还能把非字符串转换成字符串.例如： System.out.println(“5+5=”+5+5); //打印结果是？ 5+5=55 ?</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>赋值运算符：=</p>
-<ul>
-<li>符号：=<ul>
-<li>当“=”两侧数据类型不一致时，可以使用自动类型转换或使用强制 类型转换原则进行处理。</li>
-<li>支持连续赋值。</li>
-</ul>
-</li>
-<li>扩展赋值运算符： +=, -=, *=, /=, %=</li>
-</ul>
-</li>
-<li><p>比较运算符<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108141255040.png" alt="image-20210814125537627"></p>
-<p>比较运算符的结果都是boolean型，也就是要么是true，要么是false。</p>
-<p>比较运算符“==”不能误写成“=” 。</p>
-</li>
-<li><p>逻辑运算符</p>
-<p>&amp;—逻辑与     | —逻辑或     ！—逻辑非     &amp;&amp; —短路与     || —短路或     ^ —逻辑异或</p>
-<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108141256722.png" alt="image-20210814125656753"></p>
-<ul>
-<li>逻辑运算符用于连接布尔型表达式，在Java中不可以写成3&lt;x&lt;3 ,应该写成x&gt;3 &amp; x&lt;6 。</li>
-<li>“&amp;”和“&amp;&amp;”的区别：<ul>
-<li>单&amp;时，左边无论真假，右边都进行运算；</li>
-<li>双&amp;时，如果左边为真，右边参与运算，如果左边为假，那么右边不参与运算。</li>
-</ul>
-</li>
-<li>“|”和“||”的区别同理，||表示：当左边为真，右边不参与运算。</li>
-<li>异或( ^ )与或( | )的不同之处是：当左右都为true时，结果为false。</li>
-</ul>
-</li>
-<li><p>位运算符<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108141259463.png" alt="image-20210814125946801"></p>
-<ul>
-<li>位运算是直接对整数的二进制进行的运算</li>
-</ul>
-<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108141301684.png" alt="image-20210814130103547"></p>
-</li>
-<li><p>三元运算符</p>
-<ul>
-<li>格式：<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108141302892.png" alt="image-20210814130208344"></li>
-<li>表达式1和表达式2为同种类型</li>
-<li>三元运算符与if-else的联系与区别：<ul>
-<li>三元运算符可简化if-else语句</li>
-<li>三元运算符要求必须返回一个结果。</li>
-<li>if后的代码块可有多个语句</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>运算符优先级</p>
-<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108141507310.png" alt="image-20210814150746972"></p>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>个人分享平台构建（前导篇）——Markdown基础语法</title>
-    <url>/2021/02/25/%E4%B8%AA%E4%BA%BA%E5%88%86%E4%BA%AB%E5%B9%B3%E5%8F%B0%E6%9E%84%E5%BB%BA(%E5%89%8D%E5%AF%BC%E7%AF%87)%E2%80%94%E2%80%94Markdown%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/</url>
-    <content><![CDATA[<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305161628.png" alt="个人分享平台构建"></p>
-<h1 id="MarkDown常用语法"><a href="#MarkDown常用语法" class="headerlink" title="MarkDown常用语法"></a>MarkDown常用语法</h1><p><a href="https://www.bilibili.com/video/av87982836#reply2366896129">基础视频讲解链接</a><br><a href="https://www.bilibili.com/video/av88551739/">画图视频讲解链接</a></p>
-<span id="more"></span>
-<p>本篇为前导教程，帮助大家了解Markdown的基础语法 ，Markdown是一种轻量级标记语言，创始人为约翰·格鲁伯（英语：John Gruber）。它允许人们使用易读易写的纯文本格式编写文档，然后转换成有效的XHTML（或者HTML）文档。这种语言吸收了很多在电子邮件中已有的纯文本标记的特性。<br>由于Markdown的轻量化、易读易写特性，并且对于图片，图表、数学式都有支持，许多网站都广泛使用Markdown来撰写帮助文档或是用于论坛上发表消息。如GitHub、Reddit、Diaspora、Stack Exchange、OpenStreetMap 、SourceForge、简书等，甚至还能被使用来撰写电子书。了解Markdown语法规则有利于大家后期个人博客的撰写。</p>
-<h2 id="语块及标识"><a href="#语块及标识" class="headerlink" title="语块及标识"></a>语块及标识</h2><h3 id="代码块"><a href="#代码块" class="headerlink" title="代码块"></a>代码块</h3><figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="code">```语言名称</span></span><br><span class="line"><span class="code">```(英文输入法下输入)</span></span><br></pre></td></tr></table></figure>
-<h3 id="行内代码"><a href="#行内代码" class="headerlink" title="行内代码"></a>行内代码</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">`行内代码`</span><br></pre></td></tr></table></figure>
-<h3 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">&gt;一级引用</span><br><span class="line">&gt;&gt;二级引用</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<h3 id="分割线"><a href="#分割线" class="headerlink" title="分割线"></a>分割线</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">***  或  ---  或  ___</span><br></pre></td></tr></table></figure>
-<h2 id="文字效果"><a href="#文字效果" class="headerlink" title="文字效果"></a>文字效果</h2><h3 id="标题"><a href="#标题" class="headerlink" title="标题"></a>标题</h3><figure class="highlight"><table><tr><td class="code"><pre><span class="line"># 标题名字 （#个数代表标题级数）</span><br></pre></td></tr></table></figure>
-<h3 id="加粗"><a href="#加粗" class="headerlink" title="加粗"></a>加粗</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">**文本**  或  __文本__</span><br><span class="line">__(英文输入法下 Shift + -)</span><br></pre></td></tr></table></figure>
-<h3 id="斜体"><a href="#斜体" class="headerlink" title="斜体"></a>斜体</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">*文本*  或  _文本_</span><br></pre></td></tr></table></figure>
-<h3 id="加粗斜体"><a href="#加粗斜体" class="headerlink" title="加粗斜体"></a>加粗斜体</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">***文本***  或  ___文本___</span><br></pre></td></tr></table></figure>
-<h3 id="下划线"><a href="#下划线" class="headerlink" title="下划线"></a>下划线</h3><figure class="highlight"><table><tr><td class="code"><pre><span class="line">&lt;u&gt;文本&lt;/u&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="删除线"><a href="#删除线" class="headerlink" title="删除线"></a>删除线</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">~~文字~~</span><br></pre></td></tr></table></figure>
-<h3 id="在Typora下需勾选扩展语法的效果"><a href="#在Typora下需勾选扩展语法的效果" class="headerlink" title="在Typora下需勾选扩展语法的效果"></a>在Typora下需勾选扩展语法的效果</h3><h3 id="高亮"><a href="#高亮" class="headerlink" title="高亮"></a>高亮</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">==文本== （Typora下需勾选扩展语法)</span><br></pre></td></tr></table></figure>
-<h4 id="下标"><a href="#下标" class="headerlink" title="下标"></a>下标</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">水 H~<span class="number">2</span>~O</span><br><span class="line">双氧水 H~<span class="number">2</span>~O~<span class="number">2</span>~</span><br></pre></td></tr></table></figure>
-<h4 id="上标"><a href="#上标" class="headerlink" title="上标"></a>上标</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">面积 m^<span class="number">2</span>^</span><br><span class="line">体积 m^<span class="number">3</span>^</span><br></pre></td></tr></table></figure>
-<h3 id="表情符号"><a href="#表情符号" class="headerlink" title="表情符号"></a>表情符号</h3><p>😁😀 （win标 + ;)</p>
-<h2 id="跳转"><a href="#跳转" class="headerlink" title="跳转"></a>跳转</h2><h3 id="外部跳转"><a href="#外部跳转" class="headerlink" title="外部跳转"></a>外部跳转</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">[描述](网址)</span><br></pre></td></tr></table></figure>
-<h3 id="内部跳转"><a href="#内部跳转" class="headerlink" title="内部跳转"></a>内部跳转</h3><figure class="highlight"><table><tr><td class="code"><pre><span class="line">[描述]（#标题）</span><br></pre></td></tr></table></figure>
-<h3 id="自动链接"><a href="#自动链接" class="headerlink" title="自动链接"></a>自动链接</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">&lt;网址&gt;</span><br></pre></td></tr></table></figure>
-<h2 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h2><h3 id="本地图片"><a href="#本地图片" class="headerlink" title="本地图片"></a>本地图片</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">![图片描述](图片本地地址)</span><br></pre></td></tr></table></figure>
-<h3 id="网络图片"><a href="#网络图片" class="headerlink" title="网络图片"></a>网络图片</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">![图片描述](图片网络地址)</span><br></pre></td></tr></table></figure>
-<h2 id="表"><a href="#表" class="headerlink" title="表"></a>表</h2><h3 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h3><h4 id="无序表"><a href="#无序表" class="headerlink" title="无序表"></a>无序表</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">* 可以使用“*”作为标记</span><br><span class="line">+ 也可以使用“+”</span><br><span class="line">- 或者“-”</span><br></pre></td></tr></table></figure>
-<h4 id="有序表"><a href="#有序表" class="headerlink" title="有序表"></a>有序表</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">数字.空格</span><br><span class="line"><span class="number">1.</span> 有序表以数字和<span class="string">&#x27;.&#x27;</span>开始</span><br><span class="line"><span class="number">4.</span> 数字序列不会影响生成序列</span><br><span class="line"><span class="number">5</span>\. 数字\. 取消显示为列表</span><br></pre></td></tr></table></figure>
-<h3 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">使用|来分隔不同单元格，使用-来分隔表头和其他行,使用:来设置对齐</span><br><span class="line">姓名 | 年龄</span><br><span class="line">-- | --</span><br><span class="line">张三 | <span class="number">12</span></span><br><span class="line">李四 | <span class="number">23</span></span><br></pre></td></tr></table></figure>
-
-
-]]></content>
-      <categories>
-        <category>办公技能</category>
-      </categories>
-      <tags>
-        <tag>MarkDown</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>个人分享平台构建(工具篇)——Typora + PicGo + Gitee</title>
-    <url>/2021/03/05/%E4%B8%AA%E4%BA%BA%E5%88%86%E4%BA%AB%E5%B9%B3%E5%8F%B0%E6%9E%84%E5%BB%BA(%E5%B7%A5%E5%85%B7%E7%AF%87)%E2%80%94%E2%80%94Typora+PicGo+Gitee/</url>
-    <content><![CDATA[<h2 id=""><a href="#" class="headerlink" title=""></a></h2><p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305161628.png" alt="个人分享平台构建"></p>
-<span id="more"></span>
-<h3 id="工具介绍"><a href="#工具介绍" class="headerlink" title="工具介绍"></a>工具介绍</h3><h4 id="Typora"><a href="#Typora" class="headerlink" title="Typora"></a><a href="https://www.typora.io/">Typora</a></h4><p>​    <strong>Typora</strong>是一个所见即所得的Markdown格式文本编辑器，支持Windows、macOS和GNU/Linux操作系统，包括对GitHub Flavored Markdown扩展格式的支持、拼写检查、自定义CSS样式、数学公式渲染（通过MathJax）等特性，<a href="https://www.typora.io/">点击跳转下载</a>，软件截图如下：</p>
-<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305140341.png" alt="image-20210305140336396" style="zoom: 50%;" />
-
-<h4 id="PicGo"><a href="#PicGo" class="headerlink" title="PicGo"></a><a href="https://github.com/Molunerfinn/PicGo/releases/tag/v2.3.0-beta.4">PicGo</a></h4><p>​    我们在写作、写 Markdown、博客时，经常都要插入图片。然而要贴图 (上传图片) 时还得登录图床网站/服务器去手工上传和复制链接，操作比较繁琐。</p>
-<p>​    <strong>PicGo</strong> 是一款开源跨平台的免费图片上传工具以及图床相册管理软件，它能帮你快速地将图片上传到微博、又拍云、阿里云 OSS、腾讯云 COS、七牛、GitHub、sm.ms、Imgur 等常见的免费图床网站或云存储服务上，并自动复制图片的链接到剪贴板里，使用上非常高效便捷。<a href="https://github.com/Molunerfinn/PicGo/releases/tag/v2.3.0-beta.4">点击跳转下载</a>，软件截图如下：</p>
-<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305140622.png" alt="image-20210305140621282" style="zoom: 50%;" />
-
-<h4 id="Gitee"><a href="#Gitee" class="headerlink" title="Gitee"></a><a href="https://gitee.com/">Gitee</a></h4><p>​    <strong>Gitee</strong>是深圳市奥思网络科技有限公司推出的代码托管平台，支持Git和SVN，提供免费的私有仓库托管。目前开发者超过500万，托管项目超过1000万，汇聚几乎所有本土原创开源项目，并于2016年推出企业版，提供企业级代码托管服务。<a href="https://gitee.com/">点击跳转官网</a>进行Gitee账户注册。</p>
-<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305141040.png" alt="image-20210305141038648" style="zoom: 25%;" />
-
-<h3 id="工具配置"><a href="#工具配置" class="headerlink" title="工具配置"></a>工具配置</h3><p>​    Typora作为一款Markdown编辑器，搭配图床工具PicGo以及托管平台Gitee，能够简洁高效的编写图文并茂的博客。按照链接==<strong>下载好Typora、PicGo并注册Gitee账号后</strong>==，下面进入配置环节。</p>
-<h4 id="1-配置Gitee"><a href="#1-配置Gitee" class="headerlink" title="1.配置Gitee"></a>1.配置Gitee</h4><p>【创建仓库】</p>
-<p>​    点击头像右侧“+”，【新建仓库】——填写【仓库名称】——是否开源选择【公开】（如果不公开，PicGo上传之后的图片无法在Typora中通过网络地址进行显示）——【创建】</p>
-<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305144104.png" alt="image-20210305144102602" style="zoom: 67%;" />
-
-<p>【生成私人令牌】</p>
-<p>​    点击头像，【设置】——【私人令牌】——【生成新令牌】——填写令牌描述【提交】，复制令牌</p>
-<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305145414.png" alt="image-20210305145412307"></p>
-<h4 id="2-配置PicGo"><a href="#2-配置PicGo" class="headerlink" title="2.配置PicGo"></a>2.配置PicGo</h4><p><a href="https://nodejs.org/zh-cn/">点击下载node.js</a>，为安装插件做准备</p>
-<p>【插件设置】——下载gitee插件</p>
-<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305145931.png" alt="image-20210305145929348" style="zoom: 50%;" />
-
-<p>【PicGo设置】——开启Gitee图床——开启【时间戳重命名】</p>
-<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305150117.png" alt="image-20210305150114651" style="zoom:50%;" />
-
-<p>【图床设置】——Gitee图床设置</p>
-<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305150333.png" alt="image-20210305150331034" style="zoom:50%;" />
-
-<h4 id="3-配置Typora"><a href="#3-配置Typora" class="headerlink" title="3.配置Typora"></a>3.配置Typora</h4><p>【文件】——【偏好设置】——【图像】，PicGo路径为当前电脑安装路径</p>
-<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305151539.png" alt="image-20210305151537874" style="zoom:50%;" />
-
-<p>【验证图片上传选项】</p>
-<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305151955.png" alt="image-20210305151953065" style="zoom: 67%;" />
-
-<h3 id="运行测试"><a href="#运行测试" class="headerlink" title="运行测试"></a>运行测试</h3><p>​    运行PicGo，运行Typora，插入图片进行测试。右键插入的图片，点击【上传图片】，上传成功，并能正确显示，完成测试</p>
-<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/20210305152932.png" style="zoom:25%;" />
-
-
-
-]]></content>
-      <categories>
-        <category>办公技能</category>
-      </categories>
-      <tags>
-        <tag>Typora + PicGo + Gitee</tag>
       </tags>
   </entry>
   <entry>
