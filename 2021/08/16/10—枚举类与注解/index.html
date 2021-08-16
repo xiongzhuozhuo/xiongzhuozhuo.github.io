@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"github.com","root":"/","images":"/images","scheme":"Gemini","version":"8.2.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+<meta name="description" content="枚举类与注解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="10-枚举类与注解">
+<meta property="og:url" content="https://github.com/xiongzhuozhuo/xiongzhuozhuo.github.io/2021/08/16/10%E2%80%94%E6%9E%9A%E4%B8%BE%E7%B1%BB%E4%B8%8E%E6%B3%A8%E8%A7%A3/index.html">
+<meta property="og:site_name" content="XiongZhuo">
+<meta property="og:description" content="枚举类与注解">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/xiongzero/alienware_-pic-go/raw/master/img/20210722155839.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/alienware_-pic-go/raw/master/img/20210722160047.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/alienware_-pic-go/raw/master/img/20210722172007.png">
+<meta property="article:published_time" content="2021-08-16T09:36:14.049Z">
+<meta property="article:modified_time" content="2021-08-16T13:18:45.859Z">
+<meta property="article:author" content="软糖豆人">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/xiongzero/alienware_-pic-go/raw/master/img/20210722155839.png">
+
+
+<link rel="canonical" href="https://github.com/xiongzhuozhuo/xiongzhuozhuo.github.io/2021/08/16/10%E2%80%94%E6%9E%9A%E4%B8%BE%E7%B1%BB%E4%B8%8E%E6%B3%A8%E8%A7%A3/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>10-枚举类与注解 | XiongZhuo</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+  
+<a href="https://github.com/xiongzhuozhuo" class="github-corner" aria-label="View source on GitHub">
+<svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true">
+<path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+<path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+<path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path>
+</svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">XiongZhuo</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#10%E2%80%94%E6%9E%9A%E4%B8%BE%E7%B1%BB%E4%B8%8E%E6%B3%A8%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">10—枚举类与注解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%9E%9A%E4%B8%BE%E7%B1%BB"><span class="nav-number">1.1.</span> <span class="nav-text">1.枚举类</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-%E6%9E%9A%E4%B8%BE%E7%B1%BB%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 枚举类的实现</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-%E8%87%AA%E5%AE%9A%E4%B9%89%E6%9E%9A%E4%B8%BE%E7%B1%BB"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 自定义枚举类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-3-%E4%BD%BF%E7%94%A8enum%E5%AE%9A%E4%B9%89%E6%9E%9A%E4%B8%BE%E7%B1%BB"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 使用enum定义枚举类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-4-Enum%E7%B1%BB%E7%9A%84%E4%B8%BB%E8%A6%81%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 Enum类的主要方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-5-%E5%AE%9E%E7%8E%B0%E6%8E%A5%E5%8F%A3%E7%9A%84%E6%9E%9A%E4%B8%BE%E7%B1%BB"><span class="nav-number">1.1.5.</span> <span class="nav-text">1.5 实现接口的枚举类</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E6%B3%A8%E8%A7%A3%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.</span> <span class="nav-text">2.注解的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-1-%E6%B3%A8%E8%A7%A3-Annotation-%E6%A6%82%E8%BF%B0"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 注解(Annotation)概述</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-2-%E5%B8%B8%E8%A7%81%E7%9A%84Annotation%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 常见的Annotation示例</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-3-%E8%87%AA%E5%AE%9A%E4%B9%89Annotation"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 自定义Annotation</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-4-JDK%E4%B8%AD%E7%9A%84%E5%85%83%E6%B3%A8%E8%A7%A3"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 JDK中的元注解</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-5-%E5%88%A9%E7%94%A8%E5%8F%8D%E5%B0%84%E8%8E%B7%E5%8F%96%E6%B3%A8%E8%A7%A3%E4%BF%A1%E6%81%AF"><span class="nav-number">1.2.5.</span> <span class="nav-text">2.5 利用反射获取注解信息</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-6-JDK8%E4%B8%AD%E6%B3%A8%E8%A7%A3%E7%9A%84%E6%96%B0%E7%89%B9%E6%80%A7"><span class="nav-number">1.2.6.</span> <span class="nav-text">2.6 JDK8中注解的新特性</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="软糖豆人"
+      src="/images/candy.png">
+  <p class="site-author-name" itemprop="name">软糖豆人</p>
+  <div class="site-description" itemprop="description">网站分享</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/xiongzhuozhuo" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;xiongzhuozhuo"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:xiongzhuo@outlook.com" title="E-Mail → mailto:xiongzhuo@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.bilibili.com/video/BV1TA411q75f" title="https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV1TA411q75f" rel="noopener" target="_blank">Git学习教程</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.bilibili.com/video/BV16W411t7mq?p=1" title="https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV16W411t7mq?p&#x3D;1" rel="noopener" target="_blank">Hexo搭建博客</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.kuangstudy.com/" title="https:&#x2F;&#x2F;www.kuangstudy.com" rel="noopener" target="_blank">Java学习教程</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://github.com/xiongzhuozhuo/xiongzhuozhuo.github.io/2021/08/16/10%E2%80%94%E6%9E%9A%E4%B8%BE%E7%B1%BB%E4%B8%8E%E6%B3%A8%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/candy.png">
+      <meta itemprop="name" content="软糖豆人">
+      <meta itemprop="description" content="网站分享">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiongZhuo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          10-枚举类与注解
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-08-16 17:36:14 / 修改时间：21:18:45" itemprop="dateCreated datePublished" datetime="2021-08-16T17:36:14+08:00">2021-08-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2021/08/16/10%E2%80%94%E6%9E%9A%E4%B8%BE%E7%B1%BB%E4%B8%8E%E6%B3%A8%E8%A7%A3/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2021/08/16/10—枚举类与注解/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>16k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>14 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">枚举类与注解</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <span id="more"></span>
+
+<h3 id="10—枚举类与注解"><a href="#10—枚举类与注解" class="headerlink" title="10—枚举类与注解"></a>10—枚举类与注解</h3><h4 id="1-枚举类"><a href="#1-枚举类" class="headerlink" title="1.枚举类"></a>1.枚举类</h4><ul>
+<li>类的对象只有有限个，确定的。举例如下： <ul>
+<li>星期：Monday(星期一)、……、Sunday(星期天) </li>
+<li>性别：Man(男)、Woman(女) </li>
+<li> 季节：Spring(春节)……Winter(冬天) </li>
+<li>支付方式：Cash（现金）、WeChatPay（微信）、Alipay(支付宝)、BankCard(银 行卡)、CreditCard(信用卡) </li>
+<li>就职状态：Busy、Free、Vocation、Dimission </li>
+<li>订单状态：Nonpayment（未付款）、Paid（已付款）、Delivered（已发货）、 Return（退货）、Checked（已确认）Fulfilled（已配货） </li>
+<li>线程状态：创建、就绪、运行、阻塞、死亡 </li>
+</ul>
+</li>
+<li> 当需要定义一组常量时，强烈建议使用枚举类</li>
+</ul>
+<h5 id="1-1-枚举类的实现"><a href="#1-1-枚举类的实现" class="headerlink" title="1.1 枚举类的实现"></a>1.1 枚举类的实现</h5><ul>
+<li>枚举类的实现<ul>
+<li>JDK1.5之前需要自定义枚举类</li>
+<li>JDK1.5新增的enum关键字用于定义枚举类</li>
+</ul>
+</li>
+<li>若枚举只有一个对象，则可作为一种单例模式的实现方式</li>
+<li>枚举类的属性<ul>
+<li>枚举类对象的属性应不允许被改动，所以应该使用private final修饰</li>
+<li>枚举类的使用private final修饰的属性应该在构造器中为其赋值</li>
+<li>若枚举类显示的定义了带参数的构造器，则在列出枚举值时也必须对应的传入参数</li>
+</ul>
+</li>
+</ul>
+<h5 id="1-2-自定义枚举类"><a href="#1-2-自定义枚举类" class="headerlink" title="1.2 自定义枚举类"></a>1.2 自定义枚举类</h5><ol>
+<li>私有化类的构造器，保证不能在类的外部创建其对象</li>
+<li>在类的内部创建枚举类的实例。声明为：public static final</li>
+<li>对象如果有实例变量，应该声明为private final，并在构造器中初始化</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> 枚举;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SeasonTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Season season =Season.SPRING;</span><br><span class="line">        System.out.println(season);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//自定义枚举类</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Season</span></span>&#123;</span><br><span class="line">    <span class="comment">//1.声明Season对象的属性：private final修饰</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String seasonName;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String seasonDesc;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//2.私有化类的构造器。并给对象属性赋值</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Season</span><span class="params">(String seasonName, String seasonDesc)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.seasonName = seasonName;</span><br><span class="line">        <span class="keyword">this</span>.seasonDesc = seasonDesc;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//3.提供当前枚举类的多个对象：public static final的</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Season SPRING = <span class="keyword">new</span> Season(<span class="string">&quot;春天&quot;</span>,<span class="string">&quot;春暖花开&quot;</span>);</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Season SUMMER = <span class="keyword">new</span> Season(<span class="string">&quot;夏天&quot;</span>,<span class="string">&quot;夏日炎炎&quot;</span>);</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Season AUTUMN = <span class="keyword">new</span> Season(<span class="string">&quot;秋天&quot;</span>,<span class="string">&quot;秋高气爽&quot;</span>);</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Season WINTER = <span class="keyword">new</span> Season(<span class="string">&quot;冬天&quot;</span>,<span class="string">&quot;冬山如睡&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//4.其他诉求1；获取枚举类对象属性</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getSeasonName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> seasonName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getSeasonDesc</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> seasonDesc;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Season&#123;&quot;</span> +</span><br><span class="line">                <span class="string">&quot;seasonName=&#x27;&quot;</span> + seasonName + <span class="string">&#x27;\&#x27;&#x27;</span> +</span><br><span class="line">                <span class="string">&quot;, seasonDesc=&#x27;&quot;</span> + seasonDesc + <span class="string">&#x27;\&#x27;&#x27;</span> +</span><br><span class="line">                <span class="string">&#x27;&#125;&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Season{seasonName=’春天’, seasonDesc=’春暖花开’}</p>
+</blockquote>
+<h5 id="1-3-使用enum定义枚举类"><a href="#1-3-使用enum定义枚举类" class="headerlink" title="1.3 使用enum定义枚举类"></a>1.3 使用enum定义枚举类</h5><ul>
+<li>使用说明<ul>
+<li>使用enum定义的枚举类默认继承了java.lang.Enum类，因此不能再继承其他类</li>
+<li>枚举类的构造器只能使用private权限修饰符</li>
+<li>枚举类的所有实例必须在枚举类中显示列出(,分隔 ;结尾)。列出的实例系统会自动添加public static final修饰</li>
+</ul>
+</li>
+<li>JDK1.5中可以在switch表达式中使用Enum定义的枚举类的对象作为表达式，case子句可以直接使用美剧值的名字，无需添加枚举类作为限定</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">enum</span> <span class="title">SeasonEnum</span> </span>&#123;</span><br><span class="line">	SPRING(<span class="string">&quot;春天&quot;</span>,<span class="string">&quot;春风又绿江南岸&quot;</span>),</span><br><span class="line">	SUMMER(<span class="string">&quot;夏天&quot;</span>,<span class="string">&quot;映日荷花别样红&quot;</span>),</span><br><span class="line">	AUTUMN(<span class="string">&quot;秋天&quot;</span>,<span class="string">&quot;秋水共长天一色&quot;</span>),</span><br><span class="line">	WINTER(<span class="string">&quot;冬天&quot;</span>,<span class="string">&quot;窗含西岭千秋雪&quot;</span>);</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> String seasonName;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> String seasonDesc;</span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="title">SeasonEnum</span><span class="params">(String seasonName, String seasonDesc)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.seasonName = seasonName;</span><br><span class="line">		<span class="keyword">this</span>.seasonDesc = seasonDesc;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getSeasonName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> seasonName;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getSeasonDesc</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> seasonDesc;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="1-4-Enum类的主要方法"><a href="#1-4-Enum类的主要方法" class="headerlink" title="1.4 Enum类的主要方法"></a>1.4 Enum类的主要方法</h5><table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>方法描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>valeOf</td>
+<td>传递枚举类型的Class对象和枚举常量名称给静态方法valueOf，会得到与参数匹配的枚举常量</td>
+</tr>
+<tr>
+<td>toString</td>
+<td>得到当前枚举常量的名称。可以通过重写这个方法来使得到的结果更加易读</td>
+</tr>
+<tr>
+<td>equals</td>
+<td>在枚举类型中可以直接使用 == 来比较两个枚举常量是否相等。Enum在提供的这个equals()方法，也是直接使用 == 来实现的。它的存在时为了在Set、List和Map中使用。注意，equals()是不可变的</td>
+</tr>
+<tr>
+<td>hashCode</td>
+<td>Enum实现了hashCode()来和equals()保持一致。他也是不可变的</td>
+</tr>
+<tr>
+<td>getDeclaringClass</td>
+<td>得到枚举常量所属类型的Class对象。可以用它来判断两个枚举常量是否属于同一枚举类型</td>
+</tr>
+<tr>
+<td>name</td>
+<td>得到当前枚举常量的名称。建议优先使用toString()</td>
+</tr>
+<tr>
+<td>oridinal</td>
+<td>得到当前枚举常量的次序</td>
+</tr>
+<tr>
+<td>compareTo</td>
+<td>枚举类型实现了Comparable接口，这样可以比较两个枚举常量的大小（按声明的顺序排列）</td>
+</tr>
+<tr>
+<td>clone</td>
+<td>枚举类型不能被Clone。为了防止子类实现克隆方法，Enum实现了一个仅抛出CloneNotSupportedException异常的不变Clone()</td>
+</tr>
+</tbody></table>
+<ul>
+<li>Enum类的主要方法<ul>
+<li>values()返回枚举类型的对象数组。该方法可以很方便地遍历所有的枚举值</li>
+<li>valueOf(String str)可以把一个字符串转化为对应的枚举类对象。要求字符串必须是枚举对象的“名字”。如不是，会有运行时异常：IllegalArgumentException</li>
+<li>toStirng()返回当前枚举类对象常量的名称</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> 枚举;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SeasonEnumTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SeasonEnum seasonEnum = SeasonEnum.AUTUMN;</span><br><span class="line">        System.out.println(seasonEnum);<span class="comment">//返回枚举类对象的名称AUTUMN</span></span><br><span class="line">        System.out.println(<span class="string">&quot;——————————&quot;</span>);</span><br><span class="line">        <span class="comment">//values()返回所有的枚举对象构成的数组</span></span><br><span class="line">        SeasonEnum[] values = SeasonEnum.values();</span><br><span class="line">        <span class="keyword">for</span> (SeasonEnum sea :</span><br><span class="line">                values) &#123;</span><br><span class="line">            System.out.println(sea);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//valueOf(String objName):返回枚举类中对象名时objName的对象</span></span><br><span class="line">        System.out.println(<span class="string">&quot;——————————&quot;</span>);</span><br><span class="line">        SeasonEnum winter = SeasonEnum.valueOf(<span class="string">&quot;WINTER&quot;</span>);</span><br><span class="line">        System.out.println(winter);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">SeasonEnum</span></span>&#123;</span><br><span class="line">    <span class="comment">//1.提供当前枚举类的对象，多个对象之间使用&quot;,&quot;隔开，末尾对象&quot;;&quot;结束</span></span><br><span class="line">    SPRING(<span class="string">&quot;春天&quot;</span>,<span class="string">&quot;春意盎然&quot;</span>),</span><br><span class="line">    SUMMER(<span class="string">&quot;夏天&quot;</span>,<span class="string">&quot;夏炎酷暑&quot;</span>),</span><br><span class="line">    AUTUMN(<span class="string">&quot;秋天&quot;</span>,<span class="string">&quot;秋风习习&quot;</span>),</span><br><span class="line">    WINTER(<span class="string">&quot;冬天&quot;</span>,<span class="string">&quot;冬日黑裘&quot;</span>);</span><br><span class="line"></span><br><span class="line">   <span class="comment">//2.声明Season对象属性：private final修饰</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String seasonName;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String seasonDesc;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//3.私有化类的构造器</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">SeasonEnum</span><span class="params">(String seasonName, String seasonDesc)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.seasonName = seasonName;</span><br><span class="line">        <span class="keyword">this</span>.seasonDesc = seasonDesc;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//4.其他诉求：获取枚举类对象的属性</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getSeasonName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> seasonName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getSeasonDesc</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> seasonDesc;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>AUTUMN<br>——————————<br>SPRING<br>SUMMER<br>AUTUMN<br>WINTER<br>——————————<br>WINTER</p>
+</blockquote>
+<h5 id="1-5-实现接口的枚举类"><a href="#1-5-实现接口的枚举类" class="headerlink" title="1.5 实现接口的枚举类"></a>1.5 实现接口的枚举类</h5><ul>
+<li>和普通Java类一样，枚举类可以实现一个或多个接口</li>
+<li>若每个枚举值在调用实现的接口方法呈现相同的行为方式，则只要统一实现该方法即可</li>
+<li>若需要每个枚举值在调用实现的接口方法呈现出不同的行为方式，则可以让每个枚举值分别来实现该方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> 枚举;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EnumAndInterfaceTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        EnumAndInterface1 e1 = EnumAndInterface1.AUTUMN;</span><br><span class="line">        e1.show();</span><br><span class="line">        EnumAndInterface2 e2 = EnumAndInterface2.SPRING;</span><br><span class="line">        e2.show();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">EnumAndInterface1</span> <span class="keyword">implements</span> <span class="title">Info</span></span>&#123;</span><br><span class="line">    AUTUMN(<span class="string">&quot;秋天&quot;</span>),</span><br><span class="line">    WINTER(<span class="string">&quot;冬天&quot;</span>);</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String seasonName;</span><br><span class="line"></span><br><span class="line">    EnumAndInterface1(String seasonName) &#123;</span><br><span class="line">        <span class="keyword">this</span>.seasonName = seasonName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;方式一：直接实现接口的方法&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">EnumAndInterface2</span> <span class="keyword">implements</span> <span class="title">Info</span></span>&#123;</span><br><span class="line">    SPRING(<span class="string">&quot;春天&quot;</span>)&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;方式二：在枚举值里实现该方法，当前枚举值为\&quot;SPRING\&quot;&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    SUMMER(<span class="string">&quot;夏天&quot;</span>)&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;方式二：在枚举值里实现该方法，当前枚举值为\&quot;SUMMER\&quot;&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String seasonName;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">EnumAndInterface2</span><span class="params">(String seasonName)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.seasonName = seasonName;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>方式一：直接实现接口的方法<br>方式二：在枚举值里实现该方法，当前枚举值为”SPRING”</p>
+</blockquote>
+<h4 id="2-注解的使用"><a href="#2-注解的使用" class="headerlink" title="2.注解的使用"></a>2.注解的使用</h4><ul>
+<li>注解(Annotation)概述 </li>
+<li>常见的Annotation示例 </li>
+<li>自定义Annotation </li>
+<li>JDK中的元注解 </li>
+<li>利用反射获取注解信息（在反射部分涉及） </li>
+<li>JDK 8中注解的新特性</li>
+</ul>
+<h5 id="2-1-注解-Annotation-概述"><a href="#2-1-注解-Annotation-概述" class="headerlink" title="2.1 注解(Annotation)概述"></a>2.1 注解(Annotation)概述</h5><ul>
+<li>从JDK5.0开始，Java增加了对元数据(MetaData)的支持，也就是Annotation(注解)</li>
+<li>Annotation其实就是代码里的特殊标记，这些标记可以在编译，类加载，运行时被读取，并执行相应的处理。通过使用Annotation，程序员可以在不改变原有逻辑的情况下，在源文件中嵌入一些补充信息。代码分析工具、开发工具和部署工具可以通过这些补充信息进行验证或者进行部署</li>
+<li>Annotation可以像修饰符一样被使用，可以用于修饰包，类，构造器，方法，成员变量，参数，局部变量声明，这些信息被保存在Annotation的”name = value”对中</li>
+<li>在JavaSE中，注解的使用目的比较简单，例如标记过时的功能，忽略警告等。在JavaEE/Android中注解占据了更重要的角色，例如用来配置应用程序的任何切面，代替JavaEE旧版中所遗留的繁冗代码和XML配置等</li>
+<li>未来的开发模式都是基于注解的，JPA是基于注解的，Spring2.5以上都是基于注解的，Hibernate3.x以后也是基于注解的，现在的Struts2有一部分也是基于注解的了，注解是一种趋势，一定程度上可以说：框架 = 注解 + 反射 + 涉及模式</li>
+</ul>
+<h5 id="2-2-常见的Annotation示例"><a href="#2-2-常见的Annotation示例" class="headerlink" title="2.2 常见的Annotation示例"></a>2.2 常见的Annotation示例</h5><ul>
+<li><p>使用Annotation时要在其前面增加@符号。并把该Annotation当选成一个修饰符使用。用于修饰它支持的程序元素</p>
+</li>
+<li><p>示例一：生成文档相关的注解</p>
+<ul>
+<li><p>@autor标明开发该类模块的作者，多个作者之间使用,分割</p>
+</li>
+<li><p>@version标明开发类的模板</p>
+</li>
+<li><p>@see参考转向，也就是相关主题</p>
+</li>
+<li><p>@since从哪个版本开始增加的</p>
+</li>
+<li><p>@param对方法中某参数的说明，如果没有参数就不能写</p>
+</li>
+<li><p>@return对方法返回值的说明，如果方法的返回值类型是viod就不能写</p>
+</li>
+<li><p>@exception对方法可能抛出的异常进行说明，如果方法没有用throws显示抛出的异常就不能写其中</p>
+</li>
+<li><p>@param @return 和 @exception 这三个标记都是只用于方法的。 @param的格式要求：@param 形参名 形参类型 形参说明 @return 的格式要求：@return 返回值类型 返回值说明 @exception的格式要求：@exception 异常类型 异常说明 @param和@exception可以并列多个</p>
+</li>
+<li><pre><code class="java">public class JavadocTest &#123;
+/**
+* 程序的主方法，程序的入口
+* @param args String[] 命令行参数
+*/
+public static void main(String[] args) &#123;
+&#125;
+/**
+* 求圆面积的方法
+* @param radius double 半径值
+* @return double 圆的面积
+*/
+public static double getArea(double radius)&#123;
+return Math.PI * radius * radius;
+&#125;
+&#125;
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">* 示例二：在编译时进行格式检查(JDK内置的三个基本注解)</span><br><span class="line"></span><br><span class="line">  * @Override：限定重写父类方法，该注解只能用于方法</span><br><span class="line"></span><br><span class="line">  * @Deprecated：用于表示所修饰的元素(类，方法等)已过时。通常是因为所修饰的结构危险或存在更好的选择</span><br><span class="line"></span><br><span class="line">  * @SuppressWarnings：抑制编译器警告</span><br><span class="line"></span><br><span class="line">  * &#96;&#96;&#96;java</span><br><span class="line">    package com.annotation.javadoc;</span><br><span class="line">    public class AnnotationTest&#123;</span><br><span class="line">    	public static void main(String[] args) &#123;</span><br><span class="line">    		@SuppressWarnings(&quot;unused&quot;)</span><br><span class="line">    		int a &#x3D; 10;</span><br><span class="line">    	&#125;</span><br><span class="line">    	@Deprecated</span><br><span class="line">    	public void print()&#123;</span><br><span class="line">    		System.out.println(&quot;过时的方法&quot;);</span><br><span class="line">    	&#125;</span><br><span class="line">    	@Override</span><br><span class="line">    	public String toString() &#123;</span><br><span class="line">    		return &quot;重写的toString方法()&quot;;</span><br><span class="line">    	&#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p>示例三：跟踪代码依赖性，实现替代配置文件功能</p>
+<ul>
+<li><p>Servlet3.0提供了注解(annotation),使得不再需要在web.xml文件中进行Servlet的部署。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@WebServlet(&quot;/login&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doGet</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span> <span class="keyword">throws</span></span></span><br><span class="line"><span class="function">ServletException, IOException </span>&#123; &#125;</span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doPost</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span> <span class="keyword">throws</span></span></span><br><span class="line"><span class="function">ServletException, IOException </span>&#123;</span><br><span class="line">doGet(request, response);</span><br><span class="line">&#125; &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;servlet&gt;</span><br><span class="line">&lt;servlet-name&gt;LoginServlet&lt;/servlet-name&gt;</span><br><span class="line">&lt;servlet-<span class="class"><span class="keyword">class</span>&gt;<span class="title">com</span>.<span class="title">servlet</span>.<span class="title">LoginServlet</span>&lt;/<span class="title">servlet</span>-<span class="title">class</span>&gt;</span></span><br><span class="line"><span class="class">&lt;/<span class="title">servlet</span>&gt;</span></span><br><span class="line"><span class="class">&lt;<span class="title">servlet</span>-<span class="title">mapping</span>&gt;</span></span><br><span class="line"><span class="class">&lt;<span class="title">servlet</span>-<span class="title">name</span>&gt;<span class="title">LoginServlet</span>&lt;/<span class="title">servlet</span>-<span class="title">name</span>&gt;</span></span><br><span class="line"><span class="class">&lt;<span class="title">url</span>-<span class="title">pattern</span>&gt;/<span class="title">login</span>&lt;/<span class="title">url</span>-<span class="title">pattern</span>&gt;</span></span><br><span class="line"><span class="class">&lt;/<span class="title">servlet</span>-<span class="title">mapping</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>spring框架中关于“事务”的管理</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Transactional(propagation=Propagation.REQUIRES_NEW,</span></span><br><span class="line"><span class="meta">isolation=Isolation.READ_COMMITTED,readOnly=false,timeout=3)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">buyBook</span><span class="params">(String username, String isbn)</span> </span>&#123;</span><br><span class="line"><span class="comment">//1.查询书的单价</span></span><br><span class="line"><span class="keyword">int</span> price = bookShopDao.findBookPriceByIsbn(isbn);</span><br><span class="line"><span class="comment">//2. 更新库存</span></span><br><span class="line">bookShopDao.updateBookStock(isbn);</span><br><span class="line"><span class="comment">//3. 更新用户的余额</span></span><br><span class="line">bookShopDao.updateUserAccount(username, price);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 配置事务属性 --&gt;</span><br><span class="line">&lt;tx:advice transaction-manager=<span class="string">&quot;dataSourceTransactionManager&quot;</span> id=<span class="string">&quot;txAdvice&quot;</span>&gt;</span><br><span class="line">&lt;tx:attributes&gt;</span><br><span class="line">&lt;!-- 配置每个方法使用的事务属性 --&gt;</span><br><span class="line">&lt;tx:method name=<span class="string">&quot;buyBook&quot;</span> propagation=<span class="string">&quot;REQUIRES_NEW&quot;</span></span><br><span class="line">isolation=<span class="string">&quot;READ_COMMITTED&quot;</span> read-only=<span class="string">&quot;false&quot;</span> timeout=<span class="string">&quot;3&quot;</span> /&gt;</span><br><span class="line">&lt;/tx:attributes&gt;</span><br><span class="line">&lt;/tx:advice&gt;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="2-3-自定义Annotation"><a href="#2-3-自定义Annotation" class="headerlink" title="2.3 自定义Annotation"></a>2.3 自定义Annotation</h5><ul>
+<li>定义新的Annotation类型使用@interface关键字</li>
+<li>自定义注解自动继承了java.lang.annotation.Annotation接口</li>
+<li>Annotation的成员变量在Annotation定义中以无参数方法的形式来声明。其方法名和返回值定义了该成员的名字和类型。我们称为配置参数。类型只能是八种基本数据类型：Strign类型、Class类型、enum类型、Annotation类型、以上所有类型的数组</li>
+<li>可以在定义Annotationi的成员变量时为其指定初始值，指定成员变量的初始值可以使用default关键字</li>
+<li>如果只有一个参数成员，建议使用参数名为value</li>
+<li>如果定义的注解含有配置参数，那么使用时必须指定参数值，除非他有默认的值。格式是”参数名 = 参数值”，如果只有一个参数成员，且名称为value，可以省略”value=”</li>
+<li>没有成员定义的Annotation称为标记；包含成员变量的Annotation称为元数据Annotation</li>
+</ul>
+<p>注意：自定义注解必须配上注解的信息处理流程才有意义</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> 注解;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">@Target(&#123;TYPE, FIELD, METHOD, PARAMETER, CONSTRUCTOR, LOCAL_VARIABLE&#125;)</span></span><br><span class="line"><span class="comment">@Retention(RetentionPolicy.SOURCE)</span></span><br><span class="line"><span class="comment">public @interface SuppressWarnings &#123;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">     * The set of warnings that are to be suppressed by the compiler in the</span></span><br><span class="line"><span class="comment">     * annotated element.  Duplicate names are permitted.  The second and</span></span><br><span class="line"><span class="comment">     * successive occurrences of a name are ignored.  The presence of</span></span><br><span class="line"><span class="comment">     * unrecognized warning names is &lt;i&gt;not&lt;/i&gt; an error: Compilers must</span></span><br><span class="line"><span class="comment">     * ignore any warning names they do not recognize.  They are, however,</span></span><br><span class="line"><span class="comment">     * free to emit a warning if an annotation contains an unrecognized</span></span><br><span class="line"><span class="comment">     * warning name.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * &lt;p&gt; The string &#123;@code &quot;unchecked&quot;&#125; is used to suppress</span></span><br><span class="line"><span class="comment">     * unchecked warnings. Compiler vendors should document the</span></span><br><span class="line"><span class="comment">     * additional warning names they support in conjunction with this</span></span><br><span class="line"><span class="comment">     * annotation type. They are encouraged to cooperate to ensure</span></span><br><span class="line"><span class="comment">     * that the same names work across multiple compilers.</span></span><br><span class="line"><span class="comment">     * @return the set of warnings to be suppressed</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    String[] value();</span></span><br><span class="line"><span class="comment">            &#125;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> MyAnnotation &#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    参考@SuppressWarnings进行定义</span></span><br><span class="line"><span class="comment">    ①注解声明为：@interface</span></span><br><span class="line"><span class="comment">    ②内部定义成员，通常使用value表示</span></span><br><span class="line"><span class="comment">    ③可以指定成员的默认值，使用default定义</span></span><br><span class="line"><span class="comment">    ④如果自定义注解没有成员，表明是一个标识作用</span></span><br><span class="line"><span class="comment">    如果注解有成员，在使用注解时，需要指明成员的值，自定义注解必须配上注解信息处理流程（使用反射）才有意义</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    Annoation的成员变量在Annotation定义中以无参数方法的形式来声明。</span></span><br><span class="line"><span class="comment">    其方法名和返回值定义了该成员的名字和类型。我们称为配置参数。类型只能是八种基本数据类型：</span></span><br><span class="line"><span class="comment">    String、Class、enum、Annotation和以上所有类型的数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">String <span class="title">value</span><span class="params">()</span> <span class="keyword">default</span> &quot;xiong&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="2-4-JDK中的元注解"><a href="#2-4-JDK中的元注解" class="headerlink" title="2.4 JDK中的元注解"></a>2.4 JDK中的元注解</h5><ul>
+<li>JDK的元Annotation用于修饰其他的Annotation定义</li>
+<li>JDK5.0提供了4个标准的meta-annotation类型，分别是：<ul>
+<li>Retention</li>
+<li>Target</li>
+<li>Documented</li>
+<li>Inherited</li>
+</ul>
+</li>
+<li>@Retention：只能用于修饰一个Annotation定义，用于指定该Annotation的生命周期，@Rention包含一个RetentionPolicy类型的成员变量。使用@Rentention时必须为该value成员变量指定值：<ul>
+<li>RetentionPolicy.SOURCE：在源文件中有效(即源文件保留)，编译器直接丢弃这种策略的注释</li>
+<li>RetentionPolicy.CLASS：在class文件中有效(即class保留)，当运行Java程序时，JVM不会保留注解。这是默认值</li>
+<li>RetentionPolicy.RUNTIME：在运行时有效(即运行时保留)，当运行Java程序时，JVM会保留注解。程序可以通过反射来获取该注解</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://gitee.com/xiongzero/alienware_-pic-go/raw/master/img/20210722155839.png" alt="image-20210722155829815"></p>
+<ul>
+<li><p>@Target：用于修饰Annotation定义，用于指定被修饰的Annotation能用于修饰哪些程序元素。@Target也包含一个名为value的成员变量</p>
+<p><img src="https://gitee.com/xiongzero/alienware_-pic-go/raw/master/img/20210722160047.png" alt="image-20210722160046459"></p>
+</li>
+<li><p>@Documented：用于指定被该元Annotation修饰的Annotation类将被javadoc工具提取成文档。默认情况下，javadoc时不包括注解的</p>
+<ul>
+<li>定义为Documented的注解必须设置Retention值为RUNTIME</li>
+</ul>
+</li>
+<li><p>@Inherited：被它修饰的Annotation将具有==继承性==。如果某个类使用了被@Inherited修饰的Annotation，则其子类将自动具有该注解</p>
+<ul>
+<li>比如：如果把标有@Inherited注解的之定义的注解标注在类级别上，子类可以继承父类级别的注解</li>
+<li>实际应用中，使用较少</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> 注解;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Inherited;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Retention;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.RetentionPolicy;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Target;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.lang.annotation.ElementType.*;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.lang.annotation.ElementType.LOCAL_VARIABLE;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">JDK提供的四种元注解</span></span><br><span class="line"><span class="comment">元注解：对现有的注解进行解释说明的注解</span></span><br><span class="line"><span class="comment">Retention:指定所修饰的Annotation的声明周期。SOURCE/CLASS(默认行为)/RUNTIME</span></span><br><span class="line"><span class="comment">          只有声明为RUNTIME生命周期的注解才能通过反射获取</span></span><br><span class="line"><span class="comment">Target:用于指定被修饰的Annotation能用于修饰哪些程序元素</span></span><br><span class="line"><span class="comment">Documented:表示所修饰的注解被javadoc解析时，保留下来</span></span><br><span class="line"><span class="comment">Inherited:被它所修饰的Annotation将具有继承性</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">通过反射来获得注解信息</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Inherited</span></span><br><span class="line"><span class="meta">@Target(&#123;TYPE, FIELD, METHOD, PARAMETER, CONSTRUCTOR, LOCAL_VARIABLE&#125;)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> MyMetaAnnotation &#123;</span><br><span class="line">    String[] value();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="2-5-利用反射获取注解信息"><a href="#2-5-利用反射获取注解信息" class="headerlink" title="2.5 利用反射获取注解信息"></a>2.5 利用反射获取注解信息</h5><ul>
+<li>JDK5.0在java.lang.reflect包下新增了AnnotatedElement接口，该接口代表程序中可以接收注解的程序元素</li>
+<li>当一个Annotation类型被定义为运行时Annotation后，该注解才是运行时可见，当class文件被载入时保存在class文件中的Annotation才会被虚拟机读取</li>
+<li>程序可以调用AnnotatedElement对象的如下方法来访问Annotation信息</li>
+</ul>
+<p><img src="https://gitee.com/xiongzero/alienware_-pic-go/raw/master/img/20210722172007.png" alt="image-20210722172006524"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> 注解;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.junit.Test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Annotation;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AnnotationTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">       </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testGetAnnotation</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">//使用反射获取Student上的注解，来验证元注解的继承性</span></span><br><span class="line">        Class&lt;Student&gt; studentClass = Student.class;</span><br><span class="line">        Annotation[] annotations = studentClass.getAnnotations();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; annotations.length; i++) &#123;</span><br><span class="line">            System.out.println(annotations[i]);<span class="comment">//@注解.MyMetaAnnotation(value=[xiong])</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@MyMetaAnnotation(&quot;xiong&quot;)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Info</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span> <span class="keyword">extends</span> <span class="title">Person</span> <span class="keyword">implements</span> <span class="title">Info</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="2-6-JDK8中注解的新特性"><a href="#2-6-JDK8中注解的新特性" class="headerlink" title="2.6 JDK8中注解的新特性"></a>2.6 JDK8中注解的新特性</h5><p>Java8对注解处理提供了两点改进：可重复的注解及可用于类型的注解。此外反射也得到了加强，在Java8中能够得到方法参数的名称，这会简化标注在方法参数上的注解。</p>
+<p><strong>可重复注解</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> 注解;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.lang.annotation.ElementType.*;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.lang.annotation.ElementType.LOCAL_VARIABLE;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Repeatable(MyMetaAnnotationArrays.class)</span></span><br><span class="line"><span class="comment">//@Inherited</span></span><br><span class="line"><span class="meta">@Target(&#123;TYPE, FIELD, METHOD, PARAMETER, CONSTRUCTOR, LOCAL_VARIABLE&#125;)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> MyMetaAnnotation &#123;</span><br><span class="line">    <span class="function">String <span class="title">value</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> 注解;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Inherited;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Retention;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.RetentionPolicy;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Target;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.lang.annotation.ElementType.*;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.lang.annotation.ElementType.LOCAL_VARIABLE;</span><br><span class="line"><span class="comment">//@Inherited</span></span><br><span class="line"><span class="meta">@Target(&#123;TYPE, FIELD, METHOD, PARAMETER, CONSTRUCTOR, LOCAL_VARIABLE&#125;)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> MyMetaAnnotationArrays &#123;</span><br><span class="line">   MyMetaAnnotation[] value();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> 注解;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.junit.Test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Annotation;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AnnotationTest</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testGetAnnotation1</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Class&lt;Person&gt; personClass = Person.class;</span><br><span class="line">        Annotation[] annotations = personClass.getAnnotations();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; annotations.length; i++) &#123;</span><br><span class="line">            System.out.println(annotations[i]);</span><br><span class="line">            <span class="comment">//@注解.MyMetaAnnotationArrays(value=[@注解.MyMetaAnnotation(value=xiong), @注解.MyMetaAnnotation(value=zhuo)])</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//重复注解：jdk8之前</span></span><br><span class="line"><span class="comment">//创建一个新的自定义注解，包含成员变量MyMetaAnnotation的数组,</span></span><br><span class="line"><span class="comment">//@MyMetaAnnotationArrays(&#123;@MyMetaAnnotation(&quot;hello&quot;),@MyMetaAnnotation(&quot;hello&quot;)&#125;)</span></span><br><span class="line"><span class="comment">//jdk8之后</span></span><br><span class="line"><span class="meta">@MyMetaAnnotation(&quot;xiong&quot;)</span></span><br><span class="line"><span class="meta">@MyMetaAnnotation(&quot;zhuo&quot;)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>&#123;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>类型注解</strong></p>
+<ul>
+<li><p>JDK1.8之后，关于元注解@Target的参数类型ElementType枚举值多了两个：TYPE_PARAMENTER,TYPE_USE</p>
+</li>
+<li><p>在Java8之前，注解只能是在声明的地方使用，Java8开始，注解可以应用在任何地方</p>
+<ul>
+<li><p>ElementType.TYPE_PARAMENTER表示该注解能写在类型变量的声明语句中（如：泛型声明）</p>
+</li>
+<li><p>ElementType.TYPE_USE表示该注解能写在使用类型的任何语句在中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestTypeDefine</span>&lt;@<span class="title">TypeDefine</span>() <span class="title">U</span>&gt; </span>&#123;</span><br><span class="line"><span class="keyword">private</span> U u;</span><br><span class="line"><span class="keyword">public</span> &lt;<span class="meta">@TypeDefine()</span> T&gt; <span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">(T t)</span></span>&#123;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Target(&#123;ElementType.TYPE_PARAMETER&#125;)</span></span><br><span class="line"><span class="meta">@interface</span> TypeDefine&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@MyAnnotation</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AnnotationTest</span>&lt;<span class="title">U</span>&gt; </span>&#123;</span><br><span class="line">	<span class="meta">@MyAnnotation</span></span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		AnnotationTest&lt;<span class="meta">@MyAnnotation</span> String&gt; t = <span class="keyword">null</span>;</span><br><span class="line">		<span class="keyword">int</span> a = (<span class="meta">@MyAnnotation</span> <span class="keyword">int</span>) <span class="number">2L</span>;</span><br><span class="line">		<span class="meta">@MyAnnotation</span></span><br><span class="line">		<span class="keyword">int</span> b = <span class="number">10</span>;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;<span class="meta">@MyAnnotation</span> T&gt; <span class="function"><span class="keyword">void</span> <span class="title">method</span><span class="params">(T t)</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">(<span class="meta">@MyAnnotation</span> String arg)</span> <span class="keyword">throws</span> @MyAnnotation Exception </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Target(ElementType.TYPE_USE)</span></span><br><span class="line"><span class="meta">@interface</span> MyAnnotation &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.JPG" alt="软糖豆人 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.JPG" alt="软糖豆人 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+          <span class="icon">
+            <i class="fab fa-weixin"></i>
+          </span>
+
+          <span class="label">WeChat</span>
+        </a>
+      </div>
+
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/atom.xml">
+          <span class="icon">
+            <i class="fa fa-rss"></i>
+          </span>
+
+          <span class="label">RSS</span>
+        </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/08/16/09%E2%80%94Java%E5%B8%B8%E7%94%A8%E7%B1%BB%E8%A1%A5%E5%85%85%EF%BC%9A%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/" rel="prev" title="09-Java常用类补充：正则表达式">
+                  <i class="fa fa-chevron-left"></i> 09-Java常用类补充：正则表达式
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/08/16/11%E2%80%94Java%E9%9B%86%E5%90%88/" rel="next" title="11-Java集合">
+                  11-Java集合 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="SOHUCS"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">软糖豆人</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">393k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:57</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdn.jsdelivr.net/npm/ribbon.js@1.0.2/dist/ribbon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <script>
+  NexT.utils.loadComments('#SOHUCS', () => {
+    NexT.utils.getScript('https://changyan.sohu.com/upload/changyan.js', () => {
+      window.changyan.api.config({
+        appid: 'cyvkmiP62',
+        conf : 'f835963bde21c00f5de8da387f64e40a'
+      });
+    });
+  });
+  </script>
+  <script src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
