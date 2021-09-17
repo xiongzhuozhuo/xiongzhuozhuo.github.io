@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"github.com","root":"/","images":"/images","scheme":"Gemini","version":"8.2.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+<meta name="description" content="Git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git原理(03)">
+<meta property="og:url" content="https://github.com/xiongzhuozhuo/xiongzhuozhuo.github.io/2021/09/17/Git%E5%8E%9F%E7%90%86%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D3/index.html">
+<meta property="og:site_name" content="XiongZhuo">
+<meta property="og:description" content="Git">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108240833804.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108240841646.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108240931983.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108240932020.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108241003112.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108241050696.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108241054966.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108241058827.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108241109457.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108241113696.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108241115446.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108241227860.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108241334119.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108241344376.png">
+<meta property="article:published_time" content="2021-09-16T17:27:14.993Z">
+<meta property="article:modified_time" content="2021-09-17T02:50:22.345Z">
+<meta property="article:author" content="软糖豆人">
+<meta property="article:tag" content="Git">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108240833804.png">
+
+
+<link rel="canonical" href="https://github.com/xiongzhuozhuo/xiongzhuozhuo.github.io/2021/09/17/Git%E5%8E%9F%E7%90%86%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D3/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>Git原理(03) | XiongZhuo</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="XiongZhuo" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+  
+<a href="https://github.com/xiongzhuozhuo" class="github-corner" aria-label="View source on GitHub">
+<svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true">
+<path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+<path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+<path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path>
+</svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">XiongZhuo</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#18-%E6%9C%AC%E5%9C%B0%E5%88%86%E6%94%AF%E5%92%8C%E8%BF%9C%E7%A8%8B%E5%88%86%E6%94%AF"><span class="nav-number">1.</span> <span class="nav-text">18. 本地分支和远程分支</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-git-fetch-amp-git-pull"><span class="nav-number">2.</span> <span class="nav-text">19. git fetch &amp; git pull</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-FETCH-HEAD%E4%B8%8Egit-pull"><span class="nav-number">3.</span> <span class="nav-text">20. FETCH_HEAD与git pull</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#22-git-push"><span class="nav-number">4.</span> <span class="nav-text">22. git push</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#22-git-hook"><span class="nav-number">5.</span> <span class="nav-text">22. git hook</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#23-pre-commit%E9%92%A9%E5%AD%90"><span class="nav-number">6.</span> <span class="nav-text">23. pre-commit钩子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#24-git-hook%E5%92%8Cpython"><span class="nav-number">7.</span> <span class="nav-text">24. git hook和python</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="软糖豆人"
+      src="/images/candy.png">
+  <p class="site-author-name" itemprop="name">软糖豆人</p>
+  <div class="site-description" itemprop="description">网站分享</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/xiongzhuozhuo" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;xiongzhuozhuo"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:xiongzhuo@outlook.com" title="E-Mail → mailto:xiongzhuo@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.bilibili.com/video/BV1TA411q75f" title="https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV1TA411q75f" rel="noopener" target="_blank">Git学习教程</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.bilibili.com/video/BV16W411t7mq?p=1" title="https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV16W411t7mq?p&#x3D;1" rel="noopener" target="_blank">Hexo搭建博客</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.kuangstudy.com/" title="https:&#x2F;&#x2F;www.kuangstudy.com" rel="noopener" target="_blank">Java学习教程</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://github.com/xiongzhuozhuo/xiongzhuozhuo.github.io/2021/09/17/Git%E5%8E%9F%E7%90%86%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/candy.png">
+      <meta itemprop="name" content="软糖豆人">
+      <meta itemprop="description" content="网站分享">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiongZhuo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Git原理(03)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-09-17 01:27:14 / 修改时间：10:50:22" itemprop="dateCreated datePublished" datetime="2021-09-17T01:27:14+08:00">2021-09-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Git/" itemprop="url" rel="index"><span itemprop="name">Git</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2021/09/17/Git%E5%8E%9F%E7%90%86%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D3/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2021/09/17/Git原理基本介绍3/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>17k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>15 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">Git</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <span id="more"></span>
+
+<h3 id="18-本地分支和远程分支"><a href="#18-本地分支和远程分支" class="headerlink" title="18. 本地分支和远程分支"></a>18. 本地分支和远程分支</h3><p>新建文件夹，将远程仓库克隆到本地</p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108240833804.png" alt="image-20210824083327654"></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone</span><br><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">clone</span> https://github.com/xiongzhuozhuo/2021-git-demo.git</span></span><br><span class="line">Cloning into &#x27;2021-git-demo&#x27;...</span><br><span class="line">remote: Enumerating objects: 17, done.</span><br><span class="line">remote: Counting objects: 100% (17/17), done.</span><br><span class="line">remote: Compressing objects: 100% (11/11), done.</span><br><span class="line">remote: Total 17 (delta 3), reused 10 (delta 1), pack-reused 0</span><br><span class="line">Receiving objects: 100% (17/17), 4.28 KiB | 548.00 KiB/s, done.</span><br><span class="line">Resolving deltas: 100% (3/3), done.</span><br></pre></td></tr></table></figure>
+
+<p>克隆的仓库只有一个master分支，且是默认分支</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108240841646.png" alt="image-20210824084144741" style="zoom:50%;" />
+
+<p>克隆完远程仓库后，本地仓库也会新建出一个master分支 ，这个分支就是远程仓库的默认分支。</p>
+<p>①查看本地分支<code>git branch</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone</span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> 2021-git-demo/</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git branch</span></span><br><span class="line">* master</span><br></pre></td></tr></table></figure>
+
+<p>②查看远程分支<code>git branch -r</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git branch -r</span></span><br><span class="line">  origin/HEAD -&gt; origin/master</span><br><span class="line">  origin/master</span><br></pre></td></tr></table></figure>
+
+<p>③查看refs</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-clone\2021-git-demo</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git/refs /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-CLONE\2021-GIT-DEMO\.GIT\REFS</span><br><span class="line">├─heads</span><br><span class="line">│      master  #本地分支</span><br><span class="line">│</span><br><span class="line">├─remotes     #远程分支</span><br><span class="line">│  └─origin</span><br><span class="line">│          HEAD</span><br><span class="line">│</span><br><span class="line">└─tags</span><br></pre></td></tr></table></figure>
+
+<p>④refs里只有远程的HEAD，没有远程的分支，远程的分支被放在了<code>packed-refs</code>里了，查看该文件内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> cat .git/packed-refs</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> pack-refs with: peeled fully-peeled sorted</span></span><br><span class="line">70795aa27f962c60c6c139dcb390492cf5f6b615 refs/remotes/origin/master</span><br></pre></td></tr></table></figure>
+
+<p>文件存储了远程的master分支所指向的commit</p>
+<p>⑤查看提交历史</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">log</span></span></span><br><span class="line">commit 70795aa27f962c60c6c139dcb390492cf5f6b615 (HEAD -&gt; master, origin/master, origin/HEAD)</span><br><span class="line">Author: xiong &lt;68106285+xiongzhuozhuo@users.noreply.github.com&gt;</span><br><span class="line">Date:   Sun Aug 22 12:26:02 2021 +0800</span><br><span class="line"></span><br><span class="line">    Update README.md</span><br><span class="line"></span><br><span class="line">commit 7a2612b3ae1e6fd6824781d3dd921608adb6a619</span><br><span class="line">Author: xiong &lt;68106285+xiongzhuozhuo@users.noreply.github.com&gt;</span><br><span class="line">Date:   Sun Aug 22 12:16:09 2021 +0800</span><br><span class="line"></span><br><span class="line">    Create README.md</span><br><span class="line"></span><br><span class="line">commit a1431ae9fc3ef4f2ddd35c6a44349b69a5bd2f8b</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Sat Aug 21 17:10:05 2021 +0800</span><br><span class="line"></span><br><span class="line">    3rd commit</span><br><span class="line"></span><br><span class="line">commit 1928061d327bfa64a0a6ce3f4faa029b8c1ce776</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Sat Aug 21 16:14:06 2021 +0800</span><br><span class="line"></span><br><span class="line">    2nd commit</span><br><span class="line"></span><br><span class="line">commit 8a44e8c0e81d4766b22777a61f3233d8b14497cc</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Sat Aug 21 15:37:06 2021 +0800</span><br><span class="line"></span><br><span class="line">    1st commit</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>模拟远程仓库有人进行提交</p>
+<p>①仓库的初始情况</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> cat .git/packed-refs</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> pack-refs with: peeled fully-peeled sorted</span></span><br><span class="line">70795aa27f962c60c6c139dcb390492cf5f6b615 refs/remotes/origin/master</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> cat .git/refs/heads/master</span></span><br><span class="line">70795aa27f962c60c6c139dcb390492cf5f6b615</span><br></pre></td></tr></table></figure>
+
+<p>远程分支与本地分支指向的commit相同</p>
+<p>②在远程仓库修改file1.txt</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108240931983.png" alt="image-20210824093058140" style="zoom:50%;" /> 
+
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108240932020.png" alt="image-20210824093235863"></p>
+<p>查看远程的origin</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> cat .git/packed-refs</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> pack-refs with: peeled fully-peeled sorted</span></span><br><span class="line">70795aa27f962c60c6c139dcb390492cf5f6b615 refs/remotes/origin/master</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>git fetch</code>与远程进行同步</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git fetch</span></span><br><span class="line">remote: Enumerating objects: 5, done.</span><br><span class="line">remote: Counting objects: 100% (5/5), done.</span><br><span class="line">remote: Compressing objects: 100% (2/2), done.</span><br><span class="line">remote: Total 3 (delta 1), reused 0 (delta 0), pack-reused 0</span><br><span class="line">Unpacking objects: 100% (3/3), 648 bytes | 64.00 KiB/s, done.</span><br><span class="line">From https://github.com/xiongzhuozhuo/2021-git-demo</span><br><span class="line">   70795aa..278dcf6  master     -&gt; origin/master</span><br></pre></td></tr></table></figure>
+
+<p>再次查看远程origin：仍未发生改变</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> cat .git/packed-refs</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> pack-refs with: peeled fully-peeled sorted</span></span><br><span class="line">70795aa27f962c60c6c139dcb390492cf5f6b615 refs/remotes/origin/master</span><br></pre></td></tr></table></figure>
+
+<p>查看refs：出现了master</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-clone\2021-git-demo</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git/refs /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-CLONE\2021-GIT-DEMO\.GIT\REFS</span><br><span class="line">├─heads</span><br><span class="line">│      master</span><br><span class="line">│</span><br><span class="line">├─remotes</span><br><span class="line">│  └─origin</span><br><span class="line">│          HEAD</span><br><span class="line">│          master</span><br><span class="line">│</span><br><span class="line">└─tags</span><br></pre></td></tr></table></figure>
+
+<p>查看master：指向的是最新的一次提交</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> cat .git/refs/remotes/origin/master</span></span><br><span class="line">278dcf612bf8e033a15c9b429adbb32b0a9210b6</span><br></pre></td></tr></table></figure>
+
+<p>出现的原因，packed-refs不是实时的压缩，是在某个时间点进行的，所以不同步。</p>
+<hr>
+<p>在本地查看提交历史</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">log</span></span></span><br><span class="line">commit 70795aa27f962c60c6c139dcb390492cf5f6b615 (HEAD -&gt; master)</span><br><span class="line">Author: xiong &lt;68106285+xiongzhuozhuo@users.noreply.github.com&gt;</span><br><span class="line">Date:   Sun Aug 22 12:26:02 2021 +0800</span><br><span class="line"></span><br><span class="line">    Update README.md</span><br><span class="line"></span><br><span class="line">commit 7a2612b3ae1e6fd6824781d3dd921608adb6a619</span><br><span class="line">Author: xiong &lt;68106285+xiongzhuozhuo@users.noreply.github.com&gt;</span><br><span class="line">Date:   Sun Aug 22 12:16:09 2021 +0800</span><br><span class="line"></span><br><span class="line">    Create README.md</span><br><span class="line"></span><br><span class="line">commit a1431ae9fc3ef4f2ddd35c6a44349b69a5bd2f8b</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Sat Aug 21 17:10:05 2021 +0800</span><br><span class="line"></span><br><span class="line">    3rd commit</span><br><span class="line"></span><br><span class="line">commit 1928061d327bfa64a0a6ce3f4faa029b8c1ce776</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Sat Aug 21 16:14:06 2021 +0800</span><br><span class="line"></span><br><span class="line">    2nd commit</span><br><span class="line"></span><br><span class="line">commit 8a44e8c0e81d4766b22777a61f3233d8b14497cc</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Sat Aug 21 15:37:06 2021 +0800</span><br><span class="line"></span><br><span class="line">    1st commit</span><br></pre></td></tr></table></figure>
+
+<p>origin/master, origin/HEAD与现在的指向不一样了，因为远程仓库进行了一次提交，现在它超前一次本地提交</p>
+<hr>
+<p><strong>一些命令</strong></p>
+<p><code>git branch -a</code>：列出本地和远程所有的分支</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git branch -a</span></span><br><span class="line">* master</span><br><span class="line">  remotes/origin/HEAD -&gt; origin/master</span><br><span class="line">  remotes/origin/master</span><br></pre></td></tr></table></figure>
+
+<p><code>git remote -v</code>：fetch与push的远程仓库信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git remote -v</span></span><br><span class="line">origin  https://github.com/xiongzhuozhuo/2021-git-demo.git (fetch)</span><br><span class="line">origin  https://github.com/xiongzhuozhuo/2021-git-demo.git (push)</span><br></pre></td></tr></table></figure>
+
+<p><code>git remote show origin</code>：给出远程仓库的的信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git remote show origin</span></span><br><span class="line">* remote origin</span><br><span class="line">  Fetch URL: https://github.com/xiongzhuozhuo/2021-git-demo.git</span><br><span class="line">  Push  URL: https://github.com/xiongzhuozhuo/2021-git-demo.git</span><br><span class="line">  HEAD branch: master</span><br><span class="line">  Remote branch:</span><br><span class="line">    master tracked</span><br><span class="line">  Local branch configured for &#x27;git pull&#x27;:</span><br><span class="line">    master merges with remote master</span><br><span class="line">  Local ref configured for &#x27;git push&#x27;:</span><br><span class="line">    master pushes to master (local out of date)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><strong>修改远程仓库的分支</strong></p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108241003112.png" alt="image-20210824100348299" style="zoom:50%;" /> 
+
+<p><code>git remote show origin</code>：显示远程仓库信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git remote show origin</span></span><br><span class="line">* remote origin</span><br><span class="line">  Fetch URL: https://github.com/xiongzhuozhuo/2021-git-demo.git</span><br><span class="line">  Push  URL: https://github.com/xiongzhuozhuo/2021-git-demo.git</span><br><span class="line">  HEAD branch: master</span><br><span class="line">  Remote branches:</span><br><span class="line">    dev    new (next fetch will store in remotes/origin)</span><br><span class="line">    master tracked</span><br><span class="line">  Local branch configured for &#x27;git pull&#x27;:</span><br><span class="line">    master merges with remote master</span><br><span class="line">  Local ref configured for &#x27;git push&#x27;:</span><br><span class="line">    master pushes to master (local out of date)</span><br></pre></td></tr></table></figure>
+
+<p><code> dev    new (next fetch will store in remotes/origin)</code>：检测到远程仓库有新分支产生，使用fetch来存储信息到remotes/origin(如果不进行同步，本地存储的关于远程仓库的信息就仍然是旧的)</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git fetch</span></span><br><span class="line">From https://github.com/xiongzhuozhuo/2021-git-demo</span><br><span class="line"> * [new branch]      dev        -&gt; origin/dev</span><br></pre></td></tr></table></figure>
+
+<p>再次使用<code>git remote show origin</code>：就会显示dev tracked</p>
+<hr>
+<p><strong>删除远程分支</strong></p>
+<p><code>git fetch</code>对于远程分支被删除的情况是不做任何反应的，它只会将远程仓库新增的信息抓取到本地</p>
+<p>使用<code>git remote show origin</code>查看远程仓库信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git remote show origin</span></span><br><span class="line">* remote origin</span><br><span class="line">  Fetch URL: https://github.com/xiongzhuozhuo/2021-git-demo.git</span><br><span class="line">  Push  URL: https://github.com/xiongzhuozhuo/2021-git-demo.git</span><br><span class="line">  HEAD branch: master</span><br><span class="line">  Remote branches:</span><br><span class="line">    master                  tracked</span><br><span class="line">    refs/remotes/origin/dev stale (use &#x27;git remote prune&#x27; to remove)</span><br><span class="line">  Local branch configured for &#x27;git pull&#x27;:</span><br><span class="line">    master merges with remote master</span><br><span class="line">  Local ref configured for &#x27;git push&#x27;:</span><br><span class="line">    master pushes to master (local out of date)</span><br></pre></td></tr></table></figure>
+
+<p><code>refs/remotes/origin/dev stale (use &#39;git remote prune&#39; to remove)</code>：检测到dev是过期的，让用户使用<code>git remote prune</code>去移除这个垃圾对象，实际上也可以通过<code>git fetch --prune</code>进行移除。</p>
+<p>使用<code>git fetch --prune</code>时，它会先将本地有而远程没有的进行修剪，然后再进行抓取</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git fetch --prune</span></span><br><span class="line">From https://github.com/xiongzhuozhuo/2021-git-demo</span><br><span class="line"> - [deleted]         (none)     -&gt; origin/dev</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="19-git-fetch-amp-git-pull"><a href="#19-git-fetch-amp-git-pull" class="headerlink" title="19. git fetch &amp; git pull"></a>19. git fetch &amp; git pull</h3><p><strong>1.初始状态</strong></p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108241050696.png" alt="image-20210824104751038"></p>
+<p><strong>2.远程仓库更新一次提交，本地仓库使用fetch抓取更新</strong></p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108241054966.png" alt="image-20210824105452484"></p>
+<p><strong>3.执行git merge origin/master，合并分支</strong></p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108241058827.png" alt="image-20210824105849505"></p>
+<p><strong>4.远程仓库有一次提交，本地仓库在未fetch的情况下更新一次提交，同时进行git fetch 抓取远程仓库</strong></p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108241109457.png" alt="image-20210824110936322"></p>
+<p><strong>5.执行git merge origin/master</strong></p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108241113696.png" alt="image-20210824111351495"></p>
+<p><strong>6. 执行git push origin master</strong></p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108241115446.png" alt="image-20210824111542375"></p>
+<p><code>git pull</code>可以一次性代替<code>git fetch</code>和<code>git merge origin/master</code>将本地仓库推送到远程仓库</p>
+<h3 id="20-FETCH-HEAD与git-pull"><a href="#20-FETCH-HEAD与git-pull" class="headerlink" title="20. FETCH_HEAD与git pull"></a>20. FETCH_HEAD与git pull</h3><p>如果是在某个分支上去执行了<code>git fetch</code>，则排在FETCH_HEAD第一行的就是当前分支所对应的远程分支所对应的最新一次commit，只要切换分支并运行了<code>git fetch</code>那么FETCH_HEAD里的内容顺序就会改变</p>
+<p><strong>验证</strong></p>
+<ol>
+<li><p>在远程仓库创建新的分支dev</p>
+</li>
+<li><p>并在新分支上做一次commit</p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108241227860.png" alt="image-20210824122743203"></p>
+</li>
+<li><p><code>git remote show origin</code>查看远程仓库信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git remote show origin</span></span><br><span class="line">* remote origin</span><br><span class="line">  Fetch URL: https://github.com/xiongzhuozhuo/2021-git-demo.git</span><br><span class="line">  Push  URL: https://github.com/xiongzhuozhuo/2021-git-demo.git</span><br><span class="line">  HEAD branch: master</span><br><span class="line">  Remote branches:</span><br><span class="line">    dev    new (next fetch will store in remotes/origin)</span><br><span class="line">    master tracked</span><br><span class="line">  Local branch configured for &#x27;git pull&#x27;:</span><br><span class="line">    master merges with remote master</span><br><span class="line">  Local ref configured for &#x27;git push&#x27;:</span><br><span class="line">    master pushes to master (local out of date)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>git fetch</code>拉取远程仓库更新</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git fetch</span></span><br><span class="line">remote: Enumerating objects: 4, done.</span><br><span class="line">remote: Counting objects: 100% (4/4), done.</span><br><span class="line">remote: Compressing objects: 100% (2/2), done.</span><br><span class="line">remote: Total 3 (delta 1), reused 0 (delta 0), pack-reused 0</span><br><span class="line">Unpacking objects: 100% (3/3), 660 bytes | 22.00 KiB/s, done.</span><br><span class="line">From https://github.com/xiongzhuozhuo/2021-git-demo</span><br><span class="line"> * [new branch]      dev        -&gt; origin/dev</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看objects文件内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-clone\2021-git-demo</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-CLONE\2021-GIT-DEMO\.GIT</span><br><span class="line">│  config</span><br><span class="line">│  description</span><br><span class="line">│  FETCH_HEAD  #新增</span><br><span class="line">│  HEAD</span><br><span class="line">│  index</span><br><span class="line">│  packed-refs</span><br><span class="line">│</span><br><span class="line">├─hooks</span><br><span class="line">│      applypatch-msg.sample</span><br><span class="line">│      commit-msg.sample</span><br><span class="line">│      fsmonitor-watchman.sample</span><br><span class="line">│      post-update.sample</span><br><span class="line">│      pre-applypatch.sample</span><br><span class="line">│      pre-commit.sample</span><br><span class="line">│      pre-merge-commit.sample</span><br><span class="line">│      pre-push.sample</span><br><span class="line">│      pre-rebase.sample</span><br><span class="line">│      pre-receive.sample</span><br><span class="line">│      prepare-commit-msg.sample</span><br><span class="line">│      push-to-checkout.sample</span><br><span class="line">│      update.sample</span><br><span class="line">│</span><br><span class="line">├─info</span><br><span class="line">│      exclude</span><br><span class="line">│</span><br><span class="line">├─logs</span><br><span class="line">│  │  HEAD</span><br><span class="line">│  │</span><br><span class="line">│  └─refs</span><br><span class="line">│      ├─heads</span><br><span class="line">│      │      master</span><br><span class="line">│      │</span><br><span class="line">│      └─remotes</span><br><span class="line">│          └─origin</span><br><span class="line">│                  dev #新增</span><br><span class="line">│                  HEAD</span><br><span class="line">│                  master</span><br><span class="line">│</span><br><span class="line">├─objects</span><br><span class="line">│  ├─1a</span><br><span class="line">│  │      4a4bc16d7019273dfacb0060e1cb654e8b4e11</span><br><span class="line">│  │</span><br><span class="line">│  ├─27</span><br><span class="line">│  │      8dcf612bf8e033a15c9b429adbb32b0a9210b6</span><br><span class="line">│  │</span><br><span class="line">│  ├─7c</span><br><span class="line">│  │      8ac2f8d82a1eb5f6aaece6629ff11015f91eb4</span><br><span class="line">│  │</span><br><span class="line">│  ├─b8</span><br><span class="line">│  │      db963d8a1508baf093baf5e7f9424d3e384717</span><br><span class="line">│  │</span><br><span class="line">│  ├─ba</span><br><span class="line">│  │      b3f8573c3317c30242494a0f48d1c99d97eabe</span><br><span class="line">│  │</span><br><span class="line">│  ├─da</span><br><span class="line">│  │      1f73460673c0e876e2995d4a44889d75372bef</span><br><span class="line">│  │</span><br><span class="line">│  ├─info</span><br><span class="line">│  └─pack</span><br><span class="line">│          pack-531f25c34d918bbf4e84a1004317c263c51a18aa.idx</span><br><span class="line">│          pack-531f25c34d918bbf4e84a1004317c263c51a18aa.pack</span><br><span class="line">│</span><br><span class="line">└─refs</span><br><span class="line">    ├─heads</span><br><span class="line">    │      master</span><br><span class="line">    │</span><br><span class="line">    ├─remotes</span><br><span class="line">    │  └─origin</span><br><span class="line">    │          dev   #新增</span><br><span class="line">    │          HEAD</span><br><span class="line">    │          master</span><br><span class="line">    │</span><br><span class="line">    └─tags</span><br></pre></td></tr></table></figure>
+
+<p>虽然抓取了远程新增的dev分支，但是本地的heads里没有dev分支信息</p>
+</li>
+<li><p>查看新增的FETCH_HEAD文件内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> cat .git/FETCH_HEAD</span></span><br><span class="line">278dcf612bf8e033a15c9b429adbb32b0a9210b6                branch &#x27;master&#x27; of https://github.com/xiongzhuozhuo/2021-git-demo</span><br><span class="line">da1f73460673c0e876e2995d4a44889d75372bef        not-for-merge   branch &#x27;dev&#x27; of https://github.com/xiongzhuozhuo/2021-git-demo</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用<code>git checkout dev</code>，本地会新建一个dev分支，并与远程的dev分支进行关联</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git branch -vv</span></span><br><span class="line">* master 70795aa [origin/master: behind 1] Update README.md</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout dev</span></span><br><span class="line">Switched to a new branch &#x27;dev&#x27;</span><br><span class="line">Branch &#x27;dev&#x27; set up to track remote branch &#x27;dev&#x27; from &#x27;origin&#x27;.</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (dev)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git branch -vv</span></span><br><span class="line">* dev    da1f734 [origin/dev] Create file3.txt</span><br><span class="line">  master 70795aa [origin/master: behind 1] Update README.md</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看FETCH_HEAD内容：没有变化</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (dev)</span><br><span class="line"><span class="meta">$</span><span class="bash"> cat .git/FETCH_HEAD</span></span><br><span class="line">278dcf612bf8e033a15c9b429adbb32b0a9210b6                branch &#x27;master&#x27; of https://github.com/xiongzhuozhuo/2021-git-demo</span><br><span class="line">da1f73460673c0e876e2995d4a44889d75372bef        not-for-merge   branch &#x27;dev&#x27; of https://github.com/xiongzhuozhuo/2021-git-demo</span><br></pre></td></tr></table></figure>
+
+<p>但是在当前分支上运行<code>git fetch</code>后，再次查看</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (dev)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git fetch</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (dev)</span><br><span class="line"><span class="meta">$</span><span class="bash"> cat .git/FETCH_HEAD</span></span><br><span class="line">da1f73460673c0e876e2995d4a44889d75372bef                branch &#x27;dev&#x27; of https://github.com/xiongzhuozhuo/2021-git-demo</span><br><span class="line">278dcf612bf8e033a15c9b429adbb32b0a9210b6        not-for-merge   branch &#x27;master&#x27; of https://github.com/xiongzhuozhuo/2021-git-demo</span><br></pre></td></tr></table></figure>
+
+<p>描述得到验证</p>
+</li>
+</ol>
+<hr>
+<p><strong>查看分支状况</strong></p>
+<p>此时本地分支和远程分支是同步的</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git branch -vv</span></span><br><span class="line">  dev    da1f734 [origin/dev] Create file3.txt</span><br><span class="line">* master 278dcf6 [origin/master] Update file1.txt</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git fetch -v</span></span><br><span class="line">POST git-upload-pack (154 bytes)</span><br><span class="line">From https://github.com/xiongzhuozhuo/2021-git-demo</span><br><span class="line"> = [up to date]      master     -&gt; origin/master</span><br><span class="line"> = [up to date]      dev        -&gt; origin/dev</span><br><span class="line"> </span><br><span class="line"> xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git remote show origin</span></span><br><span class="line">* remote origin</span><br><span class="line">  Fetch URL: https://github.com/xiongzhuozhuo/2021-git-demo.git</span><br><span class="line">  Push  URL: https://github.com/xiongzhuozhuo/2021-git-demo.git</span><br><span class="line">  HEAD branch: master</span><br><span class="line">  Remote branches:</span><br><span class="line">    dev    tracked</span><br><span class="line">    master tracked</span><br><span class="line">  Local branches configured for &#x27;git pull&#x27;:</span><br><span class="line">    dev    merges with remote dev</span><br><span class="line">    master merges with remote master</span><br><span class="line">  Local refs configured for &#x27;git push&#x27;:</span><br><span class="line">    dev    pushes to dev    (up to date)</span><br><span class="line">    master pushes to master (up to date)</span><br></pre></td></tr></table></figure>
+
+<p>在远程仓库的dev分支添加一次commit，再执行一次<code>git pull</code>拉取远程仓库的更新</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (dev)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git pull -v</span></span><br><span class="line">POST git-upload-pack (154 bytes)</span><br><span class="line">POST git-upload-pack (268 bytes)</span><br><span class="line">remote: Enumerating objects: 5, done.</span><br><span class="line">remote: Counting objects: 100% (5/5), done.</span><br><span class="line">remote: Compressing objects: 100% (2/2), done.</span><br><span class="line">remote: Total 3 (delta 1), reused 0 (delta 0), pack-reused 0</span><br><span class="line">Unpacking objects: 100% (3/3), 640 bytes | 42.00 KiB/s, done.</span><br><span class="line">From https://github.com/xiongzhuozhuo/2021-git-demo</span><br><span class="line">   da1f734..53d3f54  dev        -&gt; origin/dev</span><br><span class="line"> = [up to date]      master     -&gt; origin/master</span><br><span class="line">Updating da1f734..53d3f54</span><br><span class="line">Fast-forward</span><br><span class="line"> file3.txt | 1 +</span><br><span class="line"> 1 file changed, 1 insertion(+)</span><br></pre></td></tr></table></figure>
+
+<p>执行<code>git pull</code>时等同于先执行<code>git fetch</code>再执行<code>git merge</code>，查看FETCH_HEAD内容，发现出现在首行的正式dev，得到验证</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (dev)</span><br><span class="line"><span class="meta">$</span><span class="bash"> cat .git/FETCH_HEAD</span></span><br><span class="line">53d3f54af87b26dc3d774b6741bcd5bb562a70e6                branch &#x27;dev&#x27; of https://github.com/xiongzhuozhuo/2021-git-demo</span><br><span class="line">278dcf612bf8e033a15c9b429adbb32b0a9210b6        not-for-merge   branch &#x27;master&#x27; of https://github.com/xiongzhuozhuo/2021-git-demo</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="22-git-push"><a href="#22-git-push" class="headerlink" title="22. git push"></a>22. git push</h3><p>如果本地分支与远程分支已经同步，则可以直接使用<code>git push</code>进行推送，如果本地仓库又有新建的分支，而且没有和远程仓库的分支进行关联，则可以使用`git </p>
+<p><strong>验证</strong></p>
+<ol>
+<li><p>查看本地分支与远程分支的同步情况</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git branch -vv</span></span><br><span class="line">  dev    53d3f54 [origin/dev] Update file3.txt</span><br><span class="line">* master 278dcf6 [origin/master] Update file1.txt</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>新建一个本地分支，查看分支关联情况</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout -b tmp</span></span><br><span class="line">Switched to a new branch &#x27;tmp&#x27;</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git branch -vv</span></span><br><span class="line">  dev    53d3f54 [origin/dev] Update file3.txt</span><br><span class="line">  master 278dcf6 [origin/master] Update file1.txt</span><br><span class="line">* tmp    278dcf6 Update file1.txt</span><br></pre></td></tr></table></figure>
+
+<p>tmp现在没有远程分支进行关联</p>
+</li>
+<li><p>在tmp分支上进行一次提交</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> <span class="string">&#x27;tmp&#x27;</span> &gt; tmp.txt</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git add tmp</span></span><br><span class="line">fatal: pathspec &#x27;tmp&#x27; did not match any files</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git add tmp.txt</span></span><br><span class="line">warning: LF will be replaced by CRLF in tmp.txt.</span><br><span class="line">The file will have its original line endings in your working directory</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git commit -m <span class="string">&#x27;commit from tmp&#x27;</span></span></span><br><span class="line">[tmp 11cdb0f] commit from tmp</span><br><span class="line"> 1 file changed, 1 insertion(+)</span><br><span class="line"> create mode 100644 tmp.txt</span><br></pre></td></tr></table></figure>
+
+<p>如果直接<code>git push</code>：当前分支tmp没有上游分支。推送当前分支并将远程分支设置为上游</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git push</span></span><br><span class="line">fatal: The current branch tmp has no upstream branch.</span><br><span class="line">To push the current branch and set the remote as upstream, use</span><br><span class="line"></span><br><span class="line">    git push --set-upstream origin tmp</span><br></pre></td></tr></table></figure>
+
+<p><code>--set -upstream</code>：进行关联的选项</p>
+<p>先不进行关联，进行测试</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git push origin tmp</span></span><br><span class="line">Enumerating objects: 4, done.</span><br><span class="line">Counting objects: 100% (4/4), done.</span><br><span class="line">Delta compression using up to 8 threads</span><br><span class="line">Compressing objects: 100% (2/2), done.</span><br><span class="line">Writing objects: 100% (3/3), 271 bytes | 271.00 KiB/s, done.</span><br><span class="line">Total 3 (delta 1), reused 0 (delta 0), pack-reused 0</span><br><span class="line">remote: Resolving deltas: 100% (1/1), completed with 1 local object.</span><br><span class="line">remote:</span><br><span class="line">remote: Create a pull request for &#x27;tmp&#x27; on GitHub by visiting:</span><br><span class="line">remote:      https://github.com/xiongzhuozhuo/2021-git-demo/pull/new/tmp</span><br><span class="line">remote:</span><br><span class="line">To https://github.com/xiongzhuozhuo/2021-git-demo.git</span><br><span class="line"> * [new branch]      tmp -&gt; tmp</span><br></pre></td></tr></table></figure>
+
+<p>查看关联情况</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git branch -vv</span></span><br><span class="line">  dev    53d3f54 [origin/dev] Update file3.txt</span><br><span class="line">  master 278dcf6 [origin/master] Update file1.txt</span><br><span class="line">* tmp    11cdb0f commit from tmp</span><br></pre></td></tr></table></figure>
+
+<p>tmp仍然没有远程分支进行关联，虽然此时远程仓库已经新建有tmp分支</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108241334119.png" alt="image-20210824133448921" style="zoom:50%;" /> 
+
+<p>删除远程分支，测试<code>git push -u</code>命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git push origin -d tmp</span></span><br><span class="line">To https://github.com/xiongzhuozhuo/2021-git-demo.git</span><br><span class="line"> - [deleted]         tmp</span><br></pre></td></tr></table></figure>
+
+<p>将本地tmp再推送一遍</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git push -u origin tmp</span></span><br><span class="line">Enumerating objects: 4, done.</span><br><span class="line">Counting objects: 100% (4/4), done.</span><br><span class="line">Delta compression using up to 8 threads</span><br><span class="line">Compressing objects: 100% (2/2), done.</span><br><span class="line">Writing objects: 100% (3/3), 271 bytes | 271.00 KiB/s, done.</span><br><span class="line">Total 3 (delta 1), reused 0 (delta 0), pack-reused 0</span><br><span class="line">remote: Resolving deltas: 100% (1/1), completed with 1 local object.</span><br><span class="line">remote:</span><br><span class="line">remote: Create a pull request for &#x27;tmp&#x27; on GitHub by visiting:</span><br><span class="line">remote:      https://github.com/xiongzhuozhuo/2021-git-demo/pull/new/tmp</span><br><span class="line">remote:</span><br><span class="line">To https://github.com/xiongzhuozhuo/2021-git-demo.git</span><br><span class="line"> * [new branch]      tmp -&gt; tmp</span><br><span class="line">Branch &#x27;tmp&#x27; set up to track remote branch &#x27;tmp&#x27; from &#x27;origin&#x27;.</span><br></pre></td></tr></table></figure>
+
+<p>查看此时关联情况：拥有了关联</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-clone/2021-git-demo (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git branch -vv</span></span><br><span class="line">  dev    53d3f54 [origin/dev] Update file3.txt</span><br><span class="line">  master 278dcf6 [origin/master] Update file1.txt</span><br><span class="line">* tmp    11cdb0f [origin/tmp] commit from tmp</span><br></pre></td></tr></table></figure>
+
+<p>有了关联之后直接使用<code>git push</code>就能进行推送</p>
+</li>
+</ol>
+<h3 id="22-git-hook"><a href="#22-git-hook" class="headerlink" title="22. git hook"></a>22. git hook</h3><p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108241344376.png" alt="image-20210824134450124"></p>
+<h3 id="23-pre-commit钩子"><a href="#23-pre-commit钩子" class="headerlink" title="23. pre-commit钩子"></a>23. pre-commit钩子</h3><h3 id="24-git-hook和python"><a href="#24-git-hook和python" class="headerlink" title="24. git hook和python"></a>24. git hook和python</h3>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.JPG" alt="软糖豆人 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.JPG" alt="软糖豆人 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+          <span class="icon">
+            <i class="fab fa-weixin"></i>
+          </span>
+
+          <span class="label">WeChat</span>
+        </a>
+      </div>
+
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/atom.xml">
+          <span class="icon">
+            <i class="fa fa-rss"></i>
+          </span>
+
+          <span class="label">RSS</span>
+        </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Git/" rel="tag"># Git</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/09/17/Git%E5%8E%9F%E7%90%86%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D2/" rel="prev" title="Git原理(02)">
+                  <i class="fa fa-chevron-left"></i> Git原理(02)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/09/17/MySQL(00)%E2%80%94%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8CSQL/" rel="next" title="MySQL(00)—数据库和SQL">
+                  MySQL(00)—数据库和SQL <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="SOHUCS"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">软糖豆人</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">543k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">8:14</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdn.jsdelivr.net/npm/ribbon.js@1.0.2/dist/ribbon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <script>
+  NexT.utils.loadComments('#SOHUCS', () => {
+    NexT.utils.getScript('https://changyan.sohu.com/upload/changyan.js', () => {
+      window.changyan.api.config({
+        appid: 'cyvkmiP62',
+        conf : 'f835963bde21c00f5de8da387f64e40a'
+      });
+    });
+  });
+  </script>
+  <script src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

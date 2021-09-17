@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"github.com","root":"/","images":"/images","scheme":"Gemini","version":"8.2.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+<meta name="description" content="Git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git原理(02)">
+<meta property="og:url" content="https://github.com/xiongzhuozhuo/xiongzhuozhuo.github.io/2021/09/17/Git%E5%8E%9F%E7%90%86%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D2/index.html">
+<meta property="og:site_name" content="XiongZhuo">
+<meta property="og:description" content="Git">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108221714162.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108231329780.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108231333871.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108231513724.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108231432493.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108231450145.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108231512858.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108231524818.png">
+<meta property="og:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108232108159.gif">
+<meta property="article:published_time" content="2021-09-16T17:27:14.982Z">
+<meta property="article:modified_time" content="2021-09-17T02:50:18.818Z">
+<meta property="article:author" content="软糖豆人">
+<meta property="article:tag" content="Git">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/xiongzero/PicGo/raw/master/img/202108221714162.png">
+
+
+<link rel="canonical" href="https://github.com/xiongzhuozhuo/xiongzhuozhuo.github.io/2021/09/17/Git%E5%8E%9F%E7%90%86%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D2/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>Git原理(02) | XiongZhuo</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="XiongZhuo" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+  
+<a href="https://github.com/xiongzhuozhuo" class="github-corner" aria-label="View source on GitHub">
+<svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true">
+<path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+<path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+<path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path>
+</svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">XiongZhuo</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#11-pack%E6%96%87%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">11. pack文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#11-1-%E8%83%8C%E6%99%AF"><span class="nav-number">1.1.</span> <span class="nav-text">11.1 背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#11-2-git-gc-%E8%BF%9B%E8%A1%8C%E6%96%87%E4%BB%B6%E5%8E%8B%E7%BC%A9"><span class="nav-number">1.2.</span> <span class="nav-text">11.2 git gc 进行文件压缩</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#11-3-%E8%A7%A3%E5%8E%8B%E7%BC%A9"><span class="nav-number">1.3.</span> <span class="nav-text">11.3 解压缩</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-git%E5%9E%83%E5%9C%BE%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%B8%85%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">12. git垃圾对象的清理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#12-1-%E5%A4%9A%E6%AC%A1%E6%B7%BB%E5%8A%A0%E4%BA%A7%E7%94%9F%E5%9E%83%E5%9C%BE%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.1.</span> <span class="nav-text">12.1 多次添加产生垃圾对象</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#12-1-2-%E4%BD%BF%E7%94%A8git-prune%E6%B8%85%E7%90%86%E5%9E%83%E5%9C%BE%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.1.1.</span> <span class="nav-text">12.1.2 使用git prune清理垃圾对象</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#12-2-%E5%88%A0%E9%99%A4%E6%9C%AA%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF%E4%BA%A7%E7%94%9F%E7%9A%84%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.2.</span> <span class="nav-text">12.2 删除未合并分支产生的对象</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-fast-forward%E5%90%88%E5%B9%B6"><span class="nav-number">3.</span> <span class="nav-text">13. fast forward合并</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-3-way-merge"><span class="nav-number">4.</span> <span class="nav-text">14. 3 way merge</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#14-1-%E6%97%A0%E5%86%B2%E7%AA%81%E7%9A%84merge"><span class="nav-number">4.1.</span> <span class="nav-text">14.1 无冲突的merge</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#14-2-%E5%B8%A6%E5%86%B2%E7%AA%81%E7%9A%843-way-merge"><span class="nav-number">4.2.</span> <span class="nav-text">14.2  带冲突的3 way merge</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-git-rebase"><span class="nav-number">5.</span> <span class="nav-text">16. git rebase</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#17-%E6%A0%87%E7%AD%BEtag"><span class="nav-number">6.</span> <span class="nav-text">17. 标签tag</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-%E6%9C%AC%E5%9C%B0%E5%88%86%E6%94%AF%E5%92%8C%E8%BF%9C%E7%A8%8B%E5%88%86%E6%94%AF"><span class="nav-number">7.</span> <span class="nav-text">18. 本地分支和远程分支</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-git-fetch-amp-git-pull"><span class="nav-number">8.</span> <span class="nav-text">19. git fetch &amp; git pull</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-fetch-head"><span class="nav-number">9.</span> <span class="nav-text">20. fetch_head</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#21-git-pull"><span class="nav-number">10.</span> <span class="nav-text">21. git pull</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#22-%E6%9C%AC%E5%9C%B0git-hook"><span class="nav-number">11.</span> <span class="nav-text">22. 本地git hook</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#23-pre-commit%E9%92%A9%E5%AD%90"><span class="nav-number">12.</span> <span class="nav-text">23. pre-commit钩子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#24-git-hook%E5%92%8Cpython"><span class="nav-number">13.</span> <span class="nav-text">24. git hook和python</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="软糖豆人"
+      src="/images/candy.png">
+  <p class="site-author-name" itemprop="name">软糖豆人</p>
+  <div class="site-description" itemprop="description">网站分享</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/xiongzhuozhuo" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;xiongzhuozhuo"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:xiongzhuo@outlook.com" title="E-Mail → mailto:xiongzhuo@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.bilibili.com/video/BV1TA411q75f" title="https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV1TA411q75f" rel="noopener" target="_blank">Git学习教程</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.bilibili.com/video/BV16W411t7mq?p=1" title="https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV16W411t7mq?p&#x3D;1" rel="noopener" target="_blank">Hexo搭建博客</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.kuangstudy.com/" title="https:&#x2F;&#x2F;www.kuangstudy.com" rel="noopener" target="_blank">Java学习教程</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://github.com/xiongzhuozhuo/xiongzhuozhuo.github.io/2021/09/17/Git%E5%8E%9F%E7%90%86%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/candy.png">
+      <meta itemprop="name" content="软糖豆人">
+      <meta itemprop="description" content="网站分享">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XiongZhuo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Git原理(02)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-09-17 01:27:14 / 修改时间：10:50:18" itemprop="dateCreated datePublished" datetime="2021-09-17T01:27:14+08:00">2021-09-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Git/" itemprop="url" rel="index"><span itemprop="name">Git</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2021/09/17/Git%E5%8E%9F%E7%90%86%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D2/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2021/09/17/Git原理基本介绍2/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>36k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>33 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">Git</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <span id="more"></span>
+
+<h3 id="11-pack文件"><a href="#11-pack文件" class="headerlink" title="11. pack文件"></a>11. pack文件</h3><h4 id="11-1-背景"><a href="#11-1-背景" class="headerlink" title="11.1 背景"></a>11.1 背景</h4><p>新建一个代码仓库作为演示</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo2</span><br><span class="line"><span class="meta">$</span><span class="bash"> git init</span></span><br><span class="line">Initialized empty Git repository in C:/Files/git-demo2/.git/</span><br></pre></td></tr></table></figure>
+
+<p>将一个大小为7.32M的文件放到工作区</p>
+<img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108221714162.png" alt="image-20210822171427745" style="zoom:50%;" /> 
+
+<ol>
+<li><p>将该文件进行添加和提交，使用<code>du -h</code>来查看文件夹的占用情况</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo2 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git add word_note.docx</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo2 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git commit -m <span class="string">&quot;1st commit&quot;</span></span></span><br><span class="line">[master (root-commit) 534c54e] 1st commit</span><br><span class="line"> 1 file changed, 0 insertions(+), 0 deletions(-)</span><br><span class="line"> create mode 100644 word_note.docx</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo2 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> du -h .git/objects</span></span><br><span class="line">1.0K    .git/objects/17</span><br><span class="line">1.0K    .git/objects/53</span><br><span class="line">7.0M    .git/objects/b8</span><br><span class="line">0       .git/objects/info</span><br><span class="line">0       .git/objects/pack</span><br><span class="line">7.0M    .git/objects</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将文件进行小的改动，随之再进行添加和提交</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo2 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git add word_note.docx</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo2 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git commit -m <span class="string">&quot;2nd commit&quot;</span></span></span><br><span class="line">[master 67a095b] 2nd commit</span><br><span class="line"> 1 file changed, 0 insertions(+), 0 deletions(-)</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo2 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git add word_note.docx</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo2 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git commit -m <span class="string">&quot;3rd commit&quot;</span></span></span><br><span class="line">[master 5153efa] 3rd commit</span><br><span class="line"> 1 file changed, 0 insertions(+), 0 deletions(-)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看此时文件夹占用情况</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo2 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> du -h .git/objects</span></span><br><span class="line">1.0K    .git/objects/17</span><br><span class="line">7.0M    .git/objects/4b</span><br><span class="line">1.0K    .git/objects/51</span><br><span class="line">1.0K    .git/objects/53</span><br><span class="line">1.0K    .git/objects/67</span><br><span class="line">1.0K    .git/objects/ae</span><br><span class="line">7.0M    .git/objects/b8</span><br><span class="line">7.0M    .git/objects/e4</span><br><span class="line">1.0K    .git/objects/fc</span><br><span class="line">0       .git/objects/info</span><br><span class="line">0       .git/objects/pack</span><br><span class="line">21M     .git/objects</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo2 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> ls -lh</span></span><br><span class="line">total 7.4M</span><br><span class="line">-rw-r--r-- 1 xiong 197609 7.4M Aug 22 17:21 word_note.docx</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo2 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git ls-files -s</span></span><br><span class="line">100644 e4d8fff037528cc82c6f923a5200f3dfa1876d6b 0       word_note.docx</span><br></pre></td></tr></table></figure>
+
+<p>进行三次提交后objects文件夹已经达到了21M，虽然此时工作区内容只有7.4M</p>
+</li>
+</ol>
+<p>​         在git里，文件会先压缩成blob对象进行存储。这虽在一定程度上减小了内存开销，但是由于每次对文件在工作区修改后，对文件进行添加和提交时，都会存储整个对象的压缩文件。根据开发实际场景，每次文件的改动都不会有较大的改动，而每次再新生成一份blob文件，就会增大内存开销。在此背景下提出了使用<code>git gc</code>进行压缩的方案</p>
+<h4 id="11-2-git-gc-进行文件压缩"><a href="#11-2-git-gc-进行文件压缩" class="headerlink" title="11.2 git gc 进行文件压缩"></a>11.2 git gc 进行文件压缩</h4><p>①使用<code>git gc</code>进行文件压缩</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo2 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git gc</span></span><br><span class="line">Enumerating objects: 9, done.</span><br><span class="line">Counting objects: 100% (9/9), done.</span><br><span class="line">Delta compression using up to 8 threads</span><br><span class="line">Compressing objects: 100% (6/6), done.</span><br><span class="line">Writing objects: 100% (9/9), done.</span><br><span class="line">Total 9 (delta 2), reused 0 (delta 0), pack-reused 0</span><br></pre></td></tr></table></figure>
+
+<p>②查看现在.git文件夹中的内存占用</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo2 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> du -h .git</span></span><br><span class="line">35K     .git/hooks</span><br><span class="line">2.0K    .git/info</span><br><span class="line">1.0K    .git/logs/refs/heads</span><br><span class="line">1.0K    .git/logs/refs</span><br><span class="line">2.0K    .git/logs</span><br><span class="line">3.0K    .git/objects/info</span><br><span class="line">7.3M    .git/objects/pack</span><br><span class="line">7.3M    .git/objects</span><br><span class="line">0       .git/refs/heads</span><br><span class="line">0       .git/refs/tags</span><br><span class="line">0       .git/refs</span><br><span class="line">7.3M    .git</span><br></pre></td></tr></table></figure>
+
+<p>21M内容压缩成7.3M</p>
+<p>③查看objects中的内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-demo2</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git/objects /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-DEMO2\.GIT\OBJECTS</span><br><span class="line">├─info</span><br><span class="line">│      commit-graph</span><br><span class="line">│      packs</span><br><span class="line">│</span><br><span class="line">└─pack</span><br><span class="line">        pack-3181db0c2b5d97f6d38c69d9a43358790246aa10.idx</span><br><span class="line">        pack-3181db0c2b5d97f6d38c69d9a43358790246aa10.pack</span><br></pre></td></tr></table></figure>
+
+<p>blob文件全部被压缩，生成了pack</p>
+<ol>
+<li><p>查看pack文件夹中文件的大小</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo2 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> ls -lh .git/objects/pack</span></span><br><span class="line">total 7.3M</span><br><span class="line">-r--r--r-- 1 xiong 197609 1.3K Aug 22 20:18 pack-3181db0c2b5d97f6d38c69d9a43358790246aa10.idx</span><br><span class="line">-r--r--r-- 1 xiong 197609 7.3M Aug 22 20:18 pack-3181db0c2b5d97f6d38c69d9a43358790246aa10.pack</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看.dex文件里存储的内容：<code>git verify-pack -v 文件路径</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo2 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git verify-pack -v .git/objects/pack/pack-3181db0c2b5d97f6d38c69d9a43358790246aa10.idx</span></span><br><span class="line">5153efa4cf47077622e7771888cae3deb87db41e commit 225 149 12</span><br><span class="line">67a095b95ff121fb3e1bc648b98814e1c8f6c148 commit 225 148 161</span><br><span class="line">534c54ea578f0d6517cb5d38ddced88d4c4158b4 commit 177 119 309</span><br><span class="line">b80edea2a581ed6917723b45871f0af11beb714d blob   7683972 7330028 428</span><br><span class="line">4b574b366e9bb3ad454462ba510db98a01837b66 blob   167961 166370 7330456 1 b80edea2a581ed6917723b45871f0af11beb714d</span><br><span class="line">e4d8fff037528cc82c6f923a5200f3dfa1876d6b blob   98578 97543 7496826 2 4b574b366e9bb3ad454462ba510db98a01837b66</span><br><span class="line">fcd21cca77d88e7c8bda0ac43e72c8b5a6c7a4be tree   42 53 7594369</span><br><span class="line">aef20abb0786e52ac2234180cf18ad488023f7f2 tree   42 52 7594422</span><br><span class="line">172344478aef4544529c644e29130d7d8f1b041f tree   42 53 7594474</span><br><span class="line">non delta: 7 objects</span><br><span class="line">chain length = 1: 1 object</span><br><span class="line">chain length = 2: 1 object</span><br><span class="line">.git/objects/pack/pack-3181db0c2b5d97f6d38c69d9a43358790246aa10.pack: ok</span><br></pre></td></tr></table></figure>
+
+<p>里面存储有之前三次添加和提交所产生对象的完整记录</p>
+<p>只有b80ede所对应的blob文件所存储的是第一次提交时对象的完整内容，另外两个blob文件（后面跟有一串SHA1值），所记录的是与原始文件存在的差异</p>
+</li>
+</ol>
+<p><strong>应用场景</strong></p>
+<p>当从远程克隆仓库到本地时，使用pack文件进行传输就可以节省传输时间，不过在传输到本地后，如果要检索到特定的某一次commit，则需要花费一点时间和内存去解压缩pack文件</p>
+<h4 id="11-3-解压缩"><a href="#11-3-解压缩" class="headerlink" title="11.3 解压缩"></a>11.3 解压缩</h4><p>使用<code>git unpack-objects &lt; 输入流</code></p>
+<p>使用<code>git help unpack-objects</code>查看命令描述</p>
+<ul>
+<li><p>名字</p>
+<p>git 拆包对象 - 从包装的存档中拆开对象</p>
+</li>
+<li><p>概要</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git unpack-objects [-n] [-q] [-r] [--strict]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>描述</p>
+<p>从标准输入中读取包装的存档 （.pack），扩展其中包含的对象，并以”松散”（每个文件一个对象）格式将其写入存储库。</p>
+<p>存储库中已经存在的对象<strong>不会</strong>从包装文件中拆开。因此，如果您在目标存储库内的包装文件上使用此命令，则不会拆开任何内容</p>
+</li>
+<li><p>选项</p>
+<p>-n</p>
+<p>干运行。检查包文件，而不实际拆开对象。</p>
+<p>-q</p>
+<p>命令通常显示百分比进度。此标志将抑制它。</p>
+<p>-r</p>
+<p>解包损坏的打包文件时，该命令在第一次损坏时终止。这个标志告诉它继续前进，尽最大努力恢复尽可能多的对象。</p>
+<p>-严格</p>
+<p>不要编写内容或链接中断的对象。</p>
+<p>-最大输入大小=&lt;尺寸&gt;</p>
+<p>如果包大于&lt;大小&gt;， 则死亡</p>
+</li>
+</ul>
+<p><strong>注意点</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-demo2</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git/objects /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-DEMO2\.GIT\OBJECTS</span><br><span class="line">├─info</span><br><span class="line">│      commit-graph</span><br><span class="line">│      packs</span><br><span class="line">│</span><br><span class="line">└─pack</span><br><span class="line">        pack-3181db0c2b5d97f6d38c69d9a43358790246aa10.idx</span><br><span class="line">        pack-3181db0c2b5d97f6d38c69d9a43358790246aa10.pack</span><br></pre></td></tr></table></figure>
+
+<p>当我们要使用unpack时，我们需要将.pack文件移到外面。虽然此时的objects文件夹里没有objects文件，但是所有的文件都被存储在pack里，所以系统任然会认为存储库中已经存在这些文件，验证如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo2 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git unpack-objects &lt; .git/objects/pack/pack-3181db0c2b5d97f6d38c69d9a43358790246aa10.pack</span></span><br><span class="line">Unpacking objects: 100% (9/9), 7.24 MiB | 32.96 MiB/s, done.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-demo2</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git/objects /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-DEMO2\.GIT\OBJECTS</span><br><span class="line">├─info</span><br><span class="line">│      commit-graph</span><br><span class="line">│      packs</span><br><span class="line">│</span><br><span class="line">└─pack</span><br><span class="line">        pack-3181db0c2b5d97f6d38c69d9a43358790246aa10.idx</span><br><span class="line">        pack-3181db0c2b5d97f6d38c69d9a43358790246aa10.pack</span><br></pre></td></tr></table></figure>
+
+<p>虽然使用了unpack文件，但是系统仍然认为仓库里有对象</p>
+<p>如果要解压当前pack文件，做法如下</p>
+<ol>
+<li><p>将pack文件移出object文件夹</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo2 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> mv .git/objects/pack/pack-3181db0c2b5d97f6d38c69d9a43358790246aa10.pack .git/</span></span><br></pre></td></tr></table></figure>
+
+<p>此时git会认为代码仓库是空的</p>
+</li>
+<li><p>使用unpack进行解压</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo2 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git unpack-objects &lt; .git/pack-3181db0c2b5d97f6d38c69d9a43358790246aa10.pack</span></span><br><span class="line">Unpacking objects: 100% (9/9), 7.24 MiB | 6.10 MiB/s, done.</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看objects文件目录</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-demo2</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git/objects /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-DEMO2\.GIT\OBJECTS</span><br><span class="line">├─17</span><br><span class="line">│      2344478aef4544529c644e29130d7d8f1b041f</span><br><span class="line">│</span><br><span class="line">├─4b</span><br><span class="line">│      574b366e9bb3ad454462ba510db98a01837b66</span><br><span class="line">│</span><br><span class="line">├─51</span><br><span class="line">│      53efa4cf47077622e7771888cae3deb87db41e</span><br><span class="line">│</span><br><span class="line">├─53</span><br><span class="line">│      4c54ea578f0d6517cb5d38ddced88d4c4158b4</span><br><span class="line">│</span><br><span class="line">├─67</span><br><span class="line">│      a095b95ff121fb3e1bc648b98814e1c8f6c148</span><br><span class="line">│</span><br><span class="line">├─ae</span><br><span class="line">│      f20abb0786e52ac2234180cf18ad488023f7f2</span><br><span class="line">│</span><br><span class="line">├─b8</span><br><span class="line">│      0edea2a581ed6917723b45871f0af11beb714d</span><br><span class="line">│</span><br><span class="line">├─e4</span><br><span class="line">│      d8fff037528cc82c6f923a5200f3dfa1876d6b</span><br><span class="line">│</span><br><span class="line">├─fc</span><br><span class="line">│      d21cca77d88e7c8bda0ac43e72c8b5a6c7a4be</span><br><span class="line">│</span><br><span class="line">├─info</span><br><span class="line">│      commit-graph</span><br><span class="line">│      packs</span><br><span class="line">│</span><br><span class="line">└─pack</span><br><span class="line">        pack-3181db0c2b5d97f6d38c69d9a43358790246aa10.idx</span><br></pre></td></tr></table></figure>
+
+<p>解压成功，将对象写入到objects文件夹里</p>
+</li>
+</ol>
+<h3 id="12-git垃圾对象的清理"><a href="#12-git垃圾对象的清理" class="headerlink" title="12. git垃圾对象的清理"></a>12. git垃圾对象的清理</h3><h4 id="12-1-多次添加产生垃圾对象"><a href="#12-1-多次添加产生垃圾对象" class="headerlink" title="12.1 多次添加产生垃圾对象"></a>12.1 多次添加产生垃圾对象</h4><p>在使用git进行版本控制的时候，通常会对一个文件在本地进行多次的修改和添加，最后才提交代码仓库。只有最后提交到代码仓库的那次才是有效的，之前所添加到索引区的文件就成为了垃圾对象。对于此类垃圾对象，使用<code>git prune</code>进行垃圾对象清理</p>
+<p>初始新的代码仓库git-demo3进行测试，新建文件test.txt，每次做一点修改就进行添加</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3</span><br><span class="line"><span class="meta">$</span><span class="bash"> git init</span></span><br><span class="line">Initialized empty Git repository in C:/Files/git-demo3/.git/</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> <span class="string">&#x27;abc&#x27;</span> &gt; test.txt</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git add test.txt</span></span><br><span class="line">warning: LF will be replaced by CRLF in test.txt.</span><br><span class="line">The file will have its original line endings in your working directory</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> vim test.txt</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git add test.txt</span></span><br><span class="line">warning: LF will be replaced by CRLF in test.txt.</span><br><span class="line">The file will have its original line endings in your working directory</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> vim test.txt</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git add test.txt</span></span><br><span class="line">warning: LF will be replaced by CRLF in test.txt.</span><br><span class="line">The file will have its original line endings in your working directory</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>查看此时objects中的内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-demo3                  </span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git/objects /f</span>                                 </span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表                              </span><br><span class="line">卷序列号为 C0000100 F296:2801                               </span><br><span class="line">C:\FILES\GIT-DEMO3\.GIT\OBJECTS                        </span><br><span class="line">├─5d                                                   </span><br><span class="line">│      8a5566f0e8b2794b60559ecaa3cf8986e23d47          </span><br><span class="line">│                                                      </span><br><span class="line">├─74                                                   </span><br><span class="line">│      ec2e70bd5e4936b3d076b469751e584f434a9a          </span><br><span class="line">│                                                      </span><br><span class="line">├─8b                                                   </span><br><span class="line">│      aef1b4abc478178b004d62031cf7fe6db6f903          </span><br><span class="line">│                                                      </span><br><span class="line">├─info                                                 </span><br><span class="line">└─pack                                                 </span><br></pre></td></tr></table></figure>
+
+<p>经过3次add，产生了三个blob对象</p>
+<p>进行一次commit，并使用<code>git gc</code>进行文件压缩，查看结果</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git commit -m <span class="string">&#x27;1st commit&#x27;</span></span></span><br><span class="line">[master (root-commit) 63a6480] 1st commit</span><br><span class="line"> 1 file changed, 3 insertions(+)</span><br><span class="line"> create mode 100644 test.txt</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git gc</span></span><br><span class="line">Enumerating objects: 3, done.</span><br><span class="line">Counting objects: 100% (3/3), done.</span><br><span class="line">Writing objects: 100% (3/3), done.</span><br><span class="line">Total 3 (delta 0), reused 0 (delta 0), pack-reused 0</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-demo3</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git/objects /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-DEMO3\.GIT\OBJECTS</span><br><span class="line">├─5d</span><br><span class="line">│      8a5566f0e8b2794b60559ecaa3cf8986e23d47</span><br><span class="line">│</span><br><span class="line">├─8b</span><br><span class="line">│      aef1b4abc478178b004d62031cf7fe6db6f903</span><br><span class="line">│</span><br><span class="line">├─info</span><br><span class="line">│      commit-graph</span><br><span class="line">│      packs</span><br><span class="line">│</span><br><span class="line">└─pack</span><br><span class="line">        pack-b9d4bdcbfa833a54a35bc737eaba5f5088f6d956.idx</span><br><span class="line">        pack-b9d4bdcbfa833a54a35bc737eaba5f5088f6d956.pack</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git verify-pack -v .git/objects/pack/pack-b9d4bdcbfa833a54a35bc737eaba5f5088f6d956.idx</span></span><br><span class="line">63a64804613dbfaa16cfc5c7fb320b501f539d75 commit 177 120 12</span><br><span class="line">74ec2e70bd5e4936b3d076b469751e584f434a9a blob   12 15 132</span><br><span class="line">85d321b0acc1f7618da3b8a24a51c743a0133932 tree   36 46 147</span><br><span class="line">non delta: 3 objects</span><br><span class="line">.git/objects/pack/pack-b9d4bdcbfa833a54a35bc737eaba5f5088f6d956.pack: ok</span><br></pre></td></tr></table></figure>
+
+<p>被压缩的对象是最后一次的blob、tree和commit对象</p>
+<p>此时可以看到有两个对象并未被压缩到pack文件里，这两个文件就是垃圾对象</p>
+<h5 id="12-1-2-使用git-prune清理垃圾对象"><a href="#12-1-2-使用git-prune清理垃圾对象" class="headerlink" title="12.1.2 使用git prune清理垃圾对象"></a>12.1.2 使用git prune清理垃圾对象</h5><p><code>git prune</code></p>
+<ul>
+<li><p>名字</p>
+<p>git prune从对象数据库中修剪所有无法到达的对象</p>
+</li>
+<li><p>概要</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git prune [-n] [-v] [--progress] [--expire &lt;time&gt;] [--] [&lt;head&gt;…]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>描述</p>
+<p>注意：在大多数情况下，用户应该运行git gc，它会调用git prune。请参阅下面的”注意”部分。</p>
+<p>运行<code>git fsck --unreachable</code>使用refs/下所有可用的refs，可以选择在命令行上指定其他对象集，并从对象数据库中删除无法从这些head对象中访问的所有未打包对象。此外，它还通过运行git prune-packed来修剪包中的未打包对象。它还从.git/shallow中删除任何ref.ref都无法访问的条目/</p>
+</li>
+<li><p>选项</p>
+<ul>
+<li><p>-n</p>
+<p>–dry-run </p>
+<p>不移除任何事物，只是显示哪些事物将会被移除</p>
+</li>
+<li><p>-v</p>
+<p>–verbose</p>
+<p>显示所有背移除的对象</p>
+</li>
+<li><p>–progress</p>
+<p>显示所有进程</p>
+</li>
+<li><p>expire<time></p>
+<p>仅使早于<time>之前的松散对象过期</p>
+</li>
+<li><p>–</p>
+<p>不要将任何其他参数解释为选项</p>
+</li>
+<li><head>...
+
+<p>除了从我们的任何引用中都可以访问的对象之外，还要保持从列出的<head>s中可以访问的对象。</p>
+</li>
+</ul>
+</li>
+<li><p>例子</p>
+<p>要修剪存储库未使用的对象或通过其从存储库借用的其他对象，请执行以下操作：<code>.git/objects/info/alternates</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git prune $(<span class="built_in">cd</span> ../another &amp;&amp; git rev-parse --all)</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p><code>git fsck</code></p>
+<ul>
+<li><p>名字</p>
+<p>git-fsck - 验证数据库中对象的连接和有效性</p>
+</li>
+<li><p>概要</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git fsck [--tags] [--root] [--unreachable] [--cache] [--no-reflogs]</span><br><span class="line">         [--[no-]full] [--strict] [--verbose] [--lost-found]</span><br><span class="line">         [--[no-]dangling] [--[no-]progress] [--connectivity-only]</span><br><span class="line">         [--[no-]name-objects] [&lt;object&gt;*]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>描述</p>
+<p>验证数据库中对象的连接和有效性。</p>
+</li>
+<li><p>选项</p>
+<ul>
+<li><p>&lt;object&gt;</p>
+<p>要作为不可访问性跟踪的头部处理的对象。<br>如果未提供任何对象，git fsck默认使用索引文件、refs命名空间中的所有SHA-1引用以及所有reflogs（除非提供了–no reflogs）作为头。</p>
+</li>
+<li><p>–unreachable</p>
+<p>打印存在但无法从任何引用节点访问的对象。</p>
+</li>
+<li><p>–[no-]dangling</p>
+<p>打印存在但从未直接使用的对象（默认）–不能使用任何悬空来从输出中忽略此信息。</p>
+</li>
+<li><p>–root</p>
+<p>显示根节点</p>
+</li>
+<li><p>–tags</p>
+<p>显示标签</p>
+</li>
+<li><p>–cache</p>
+<p>将索引中记录的任何对象也作为不可达跟踪的头节点。</p>
+</li>
+<li><p>–no-reflogs</p>
+<p>不要考虑仅由reflog中的条目引用的可到达的提交。此选项仅用于搜索以前在ref中但现在不在ref中但仍在相应reflog中的提交。</p>
+</li>
+<li><p>–full</p>
+<p>不仅要检查GIT_OBJECT_目录（$GIT_DIR/objects）中的对象，还要检查GIT_alternate_OBJECT_目录或$GIT_DIR/objects/info/alternates中列出的备用对象池中的对象，以及备用对象池中的$GIT_DIR/objects/pack和相应的pack子目录中的打包GIT归档中的对象。现在这是默认值；你可以关闭它，不需要完全关闭。</p>
+<p>……</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>使用prune -n显示会被删除的对象</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git prune -n</span></span><br><span class="line">5d8a5566f0e8b2794b60559ecaa3cf8986e23d47 blob</span><br><span class="line">8baef1b4abc478178b004d62031cf7fe6db6f903 blob</span><br></pre></td></tr></table></figure>
+
+<p><strong>使用git fsck查看悬空的对象</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git fsck</span></span><br><span class="line">Checking object directories: 100% (256/256), done.</span><br><span class="line">Checking objects: 100% (3/3), done.</span><br><span class="line">dangling blob 8baef1b4abc478178b004d62031cf7fe6db6f903</span><br><span class="line">dangling blob 5d8a5566f0e8b2794b60559ecaa3cf8986e23d47</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>使用<code>git prune</code>删除</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git prune</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看objects</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-demo3</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git/objects /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-DEMO3\.GIT\OBJECTS</span><br><span class="line">├─info</span><br><span class="line">│      commit-graph</span><br><span class="line">│      packs</span><br><span class="line">│</span><br><span class="line">└─pack</span><br><span class="line">        pack-b9d4bdcbfa833a54a35bc737eaba5f5088f6d956.idx</span><br><span class="line">        pack-b9d4bdcbfa833a54a35bc737eaba5f5088f6d956.pack</span><br></pre></td></tr></table></figure>
+
+<p>悬空的两个对象被删除了</p>
+</li>
+</ol>
+<h4 id="12-2-删除未合并分支产生的对象"><a href="#12-2-删除未合并分支产生的对象" class="headerlink" title="12.2 删除未合并分支产生的对象"></a>12.2 删除未合并分支产生的对象</h4><p>对于新建的分支，如果想完整的删除分支，先使用<code>git -D 分支名</code>强制删除，但是这样操作，分支上所做的操作还是可以被还原，分支上的文件也仍然存在，而且使用<code>git prune</code>不会认为是</p>
+<ol>
+<li><p>创建分支，在分支上添加内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout -b tmp</span></span><br><span class="line">Switched to a new branch &#x27;tmp&#x27;</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> <span class="string">&#x27;tmp&#x27;</span>&gt;tmp.txt</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> ls</span></span><br><span class="line">test.txt  tmp.txt</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git add tmp.txt</span></span><br><span class="line">warning: LF will be replaced by CRLF in tmp.txt.</span><br><span class="line">The file will have its original line endings in your working directory</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>分析一次add的情况</p>
+<ol>
+<li><p>切换到master分支</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout master</span></span><br><span class="line">Switched to branch &#x27;master&#x27;</span><br><span class="line">A       tmp.txt</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git prune -n</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git fsck</span></span><br><span class="line">Checking object directories: 100% (256/256), done.</span><br><span class="line">Checking objects: 100% (3/3), done.</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>切换到tmp分支</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout tmp</span></span><br><span class="line">Switched to branch &#x27;tmp&#x27;</span><br><span class="line">A       tmp.txt</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git prune -n</span></span><br></pre></td></tr></table></figure>
+
+<p>对于只add过一次但还没提交的文件，系统不认为是悬空文件</p>
+</li>
+</ol>
+</li>
+<li><p>分析add两次，提交一次的情况</p>
+<ol>
+<li><p>修改tmp.txt文件，进行一次提交</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> vim tmp.txt</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git add tmp.txt</span></span><br><span class="line">warning: LF will be replaced by CRLF in tmp.txt.</span><br><span class="line">The file will have its original line endings in your working directory</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在tmp分支上查看悬空对象</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git commit -m <span class="string">&#x27;1st commit from tmp&#x27;</span></span></span><br><span class="line">[tmp 1915cf6] 1st commit from tmp</span><br><span class="line"> 1 file changed, 2 insertions(+)</span><br><span class="line"> create mode 100644 tmp.txt</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git fsck</span></span><br><span class="line">Checking object directories: 100% (256/256), done.</span><br><span class="line">Checking objects: 100% (3/3), done.</span><br><span class="line">dangling blob a9a5aecf429fd8a0d81fbd5fd37006bfa498d5c1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>切换到master分支上查看悬空对象</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (tmp)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout master</span></span><br><span class="line">Switched to branch &#x27;master&#x27;</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git fsck</span></span><br><span class="line">Checking object directories: 100% (256/256), done.</span><br><span class="line">Checking objects: 100% (3/3), done.</span><br><span class="line">dangling blob a9a5aecf429fd8a0d81fbd5fd37006bfa498d5c1</span><br></pre></td></tr></table></figure>
+
+<p>分支上的悬空对象，其他分支也能检测到</p>
+</li>
+</ol>
+</li>
+<li><p>切换到master分支强制删除tmp</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git branch -D tmp</span></span><br><span class="line">Deleted branch tmp (was 1915cf6).</span><br></pre></td></tr></table></figure>
+
+<p>objects目录没有任何变化</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-demo3</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git/objects /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-DEMO3\.GIT\OBJECTS</span><br><span class="line">├─0c</span><br><span class="line">│      190188dbbf78236873f4d98402eb35440cf292</span><br><span class="line">│</span><br><span class="line">├─19</span><br><span class="line">│      15cf671b63040967ff38cf434df3a6860da113</span><br><span class="line">│</span><br><span class="line">├─62</span><br><span class="line">│      189d1a10cc2a544c4e5b9c4aba9493cf5782dc</span><br><span class="line">│</span><br><span class="line">├─a9</span><br><span class="line">│      a5aecf429fd8a0d81fbd5fd37006bfa498d5c1</span><br><span class="line">│</span><br><span class="line">├─info</span><br><span class="line">│      commit-graph</span><br><span class="line">│      packs</span><br><span class="line">│</span><br><span class="line">└─pack</span><br><span class="line">        pack-b9d4bdcbfa833a54a35bc737eaba5f5088f6d956.idx</span><br><span class="line">        pack-b9d4bdcbfa833a54a35bc737eaba5f5088f6d956.pack</span><br></pre></td></tr></table></figure>
+
+<p>在此种情况下，tmp分支上的对象可以认为是垃圾对象</p>
+</li>
+<li><p>执行<code>git prune</code>删除对象：不会认为tmp分支上的add(最后一次的)和commit是垃圾对象</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git prune</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-demo3</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git/objects /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-DEMO3\.GIT\OBJECTS</span><br><span class="line">├─0c</span><br><span class="line">│      190188dbbf78236873f4d98402eb35440cf292</span><br><span class="line">│</span><br><span class="line">├─19</span><br><span class="line">│      15cf671b63040967ff38cf434df3a6860da113</span><br><span class="line">│</span><br><span class="line">├─62</span><br><span class="line">│      189d1a10cc2a544c4e5b9c4aba9493cf5782dc</span><br><span class="line">│</span><br><span class="line">├─info</span><br><span class="line">│      commit-graph</span><br><span class="line">│      packs</span><br><span class="line">│</span><br><span class="line">└─pack</span><br><span class="line">        pack-b9d4bdcbfa833a54a35bc737eaba5f5088f6d956.idx</span><br><span class="line">        pack-b9d4bdcbfa833a54a35bc737eaba5f5088f6d956.pack</span><br></pre></td></tr></table></figure>
+
+<p>只有一个之前被检测到的悬空对象被删除了</p>
+</li>
+<li><p>执行<code>git gc</code>：不会认为tmp分支上的add(最后一次的)和commit是垃圾对象，并将其压缩到pack里</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git gc</span></span><br><span class="line">Enumerating objects: 6, done.</span><br><span class="line">Counting objects: 100% (6/6), done.</span><br><span class="line">Delta compression using up to 8 threads</span><br><span class="line">Compressing objects: 100% (3/3), done.</span><br><span class="line">Writing objects: 100% (6/6), done.</span><br><span class="line">Total 6 (delta 0), reused 3 (delta 0), pack-reused 0</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git verify-pack -v .git/objects/pack/pack-17c963e06e14119b3281aa3a1fa16ebbc8817341.idx</span></span><br><span class="line">1915cf671b63040967ff38cf434df3a6860da113 commit 234 154 12</span><br><span class="line">63a64804613dbfaa16cfc5c7fb320b501f539d75 commit 177 120 166</span><br><span class="line">74ec2e70bd5e4936b3d076b469751e584f434a9a blob   12 15 286</span><br><span class="line">85d321b0acc1f7618da3b8a24a51c743a0133932 tree   36 46 301</span><br><span class="line">0c190188dbbf78236873f4d98402eb35440cf292 tree   71 74 347</span><br><span class="line">62189d1a10cc2a544c4e5b9c4aba9493cf5782dc blob   8 15 421</span><br><span class="line">non delta: 6 objects</span><br><span class="line">.git/objects/pack/pack-17c963e06e14119b3281aa3a1fa16ebbc8817341.pack: ok</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>对于这种情况，使用下面的命令可以进行解决<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/3797907/how-to-remove-unused-objects-from-a-git-repository">file - How to remove unused objects from a git repository? - Stack Overflow</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git -c gc.reflogExpire=0 -c gc.reflogExpireUnreachable=0 \</span><br><span class="line">  -c gc.rerereresolved=0 -c gc.rerereunresolved=0 \</span><br><span class="line">  -c gc.pruneExpire=now gc &quot;$@&quot;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git -c gc.reflogExpire=0 -c gc.reflogExpireUnreachable=0 \</span></span><br><span class="line"><span class="bash">&gt;   -c gc.rerereresolved=0 -c gc.rerereunresolved=0 \</span></span><br><span class="line"><span class="bash">&gt;   -c gc.pruneExpire=now gc <span class="string">&quot;<span class="variable">$@</span>&quot;</span></span></span><br><span class="line">Enumerating objects: 3, done.</span><br><span class="line">Counting objects: 100% (3/3), done.</span><br><span class="line">Writing objects: 100% (3/3), done.</span><br><span class="line">Total 3 (delta 0), reused 3 (delta 0), pack-reused 0</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git verify-pack -v .git/objects/pack/pack-b9d4bdcbfa833a54a35bc737eaba5f5088f6d956.idx</span></span><br><span class="line">63a64804613dbfaa16cfc5c7fb320b501f539d75 commit 177 120 12</span><br><span class="line">74ec2e70bd5e4936b3d076b469751e584f434a9a blob   12 15 132</span><br><span class="line">85d321b0acc1f7618da3b8a24a51c743a0133932 tree   36 46 147</span><br><span class="line">non delta: 3 objects</span><br><span class="line">.git/objects/pack/pack-b9d4bdcbfa833a54a35bc737eaba5f5088f6d956.pack: ok</span><br></pre></td></tr></table></figure>
+
+<p>不仅经过压缩了的可以这样进行处理，未压缩的也可以</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout -b tmp2</span></span><br><span class="line">Switched to a new branch &#x27;tmp2&#x27;</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (tmp2)</span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> <span class="string">&#x27;tmp2&#x27;</span> &gt; tmp2.txt</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (tmp2)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git add tmp2.txt</span></span><br><span class="line">warning: LF will be replaced by CRLF in tmp2.txt.</span><br><span class="line">The file will have its original line endings in your working directory</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (tmp2)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git commit -m <span class="string">&#x27;1st commit from tmp2&#x27;</span></span></span><br><span class="line">[tmp2 92cb3a6] 1st commit from tmp2</span><br><span class="line"> 1 file changed, 1 insertion(+)</span><br><span class="line"> create mode 100644 tmp2.txt</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (tmp2)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout master</span></span><br><span class="line">Switched to branch &#x27;master&#x27;</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git branch -D tmp2</span></span><br><span class="line">Deleted branch tmp2 (was 92cb3a6).</span><br></pre></td></tr></table></figure>
+
+<p>清理前查看objects文件夹</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> tree .git/objects /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-DEMO3\.GIT\OBJECTS</span><br><span class="line">├─92</span><br><span class="line">│      cb3a62ebb6ad8c15b5f85e9349f6342d0b2ed8</span><br><span class="line">│</span><br><span class="line">├─d0</span><br><span class="line">│      c22e2dc4474240f8082a39ff275622b1221e82</span><br><span class="line">│</span><br><span class="line">├─f0</span><br><span class="line">│      206044e90fd5c77500ec550df0a0be6f0d0c46</span><br><span class="line">│</span><br><span class="line">├─info</span><br><span class="line">│      commit-graph</span><br><span class="line">│      packs</span><br><span class="line">│</span><br><span class="line">└─pack</span><br><span class="line">        pack-b9d4bdcbfa833a54a35bc737eaba5f5088f6d956.idx</span><br><span class="line">        pack-b9d4bdcbfa833a54a35bc737eaba5f5088f6d956.pack</span><br></pre></td></tr></table></figure>
+
+<p>清理</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git -c gc.reflogExpire=0 -c gc.reflogExpireUnreachable=0 \</span></span><br><span class="line"><span class="bash">&gt; -c gc.rerereresolved=0 -c gc.rerereunresolved=0 \</span></span><br><span class="line"><span class="bash">&gt; -c gc.pruneExpire=now gc <span class="string">&quot;<span class="variable">$@</span>&quot;</span></span></span><br><span class="line">Enumerating objects: 3, done.</span><br><span class="line">Counting objects: 100% (3/3), done.</span><br><span class="line">Writing objects: 100% (3/3), done.</span><br><span class="line">Total 3 (delta 0), reused 3 (delta 0), pack-reused 0</span><br></pre></td></tr></table></figure>
+
+<p>清理后查看objects文件夹</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-demo3</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git/objects /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-DEMO3\.GIT\OBJECTS</span><br><span class="line">├─info</span><br><span class="line">│      commit-graph</span><br><span class="line">│      packs</span><br><span class="line">│</span><br><span class="line">└─pack</span><br><span class="line">        pack-b9d4bdcbfa833a54a35bc737eaba5f5088f6d956.idx</span><br><span class="line">        pack-b9d4bdcbfa833a54a35bc737eaba5f5088f6d956.pack</span><br></pre></td></tr></table></figure>
+
+<h3 id="13-fast-forward合并"><a href="#13-fast-forward合并" class="headerlink" title="13. fast forward合并"></a>13. fast forward合并</h3><p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108231329780.png" alt="image-20210823132936534"></p>
+<p>如果当前分支是在master上新建的，而且master分支并未再次进行commit，则满足fast forward的要求</p>
+<p>将当前分支切换到master分支，再执行<code>git merge 分支名</code>进行分支合并，实际上只是做了一个指针的移动</p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108231333871.png" alt="image-20210823133312415"></p>
+<p><strong>测试</strong></p>
+<p>当前仓库只有一次提交，且指针指向master分支</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">log</span></span></span><br><span class="line">commit 63a64804613dbfaa16cfc5c7fb320b501f539d75 (HEAD -&gt; master)</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Mon Aug 23 08:34:07 2021 +0800</span><br><span class="line"></span><br><span class="line">    1st commit</span><br></pre></td></tr></table></figure>
+
+<p>基于当前分支，创建一个新的分支进行演示</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout -b dev</span></span><br><span class="line">Switched to a new branch &#x27;dev&#x27;</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (dev)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">log</span></span></span><br><span class="line">commit 63a64804613dbfaa16cfc5c7fb320b501f539d75 (HEAD -&gt; dev, master)</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Mon Aug 23 08:34:07 2021 +0800</span><br><span class="line"></span><br><span class="line">    1st commit</span><br></pre></td></tr></table></figure>
+
+<p>在新分支上产生一次commit：执行完毕后新分支超前master分支一次提交</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (dev)</span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> <span class="string">&#x27;test2&#x27;</span> &gt; test2.txt</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (dev)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git add test2.txt</span></span><br><span class="line">warning: LF will be replaced by CRLF in test2.txt.</span><br><span class="line">The file will have its original line endings in your working directory</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (dev)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git commit -m <span class="string">&#x27;2nd commit&#x27;</span></span></span><br><span class="line">[dev 596b3cd] 2nd commit</span><br><span class="line"> 1 file changed, 1 insertion(+)</span><br><span class="line"> create mode 100644 test2.txt</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (dev)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">log</span></span></span><br><span class="line">commit 596b3cd55b27dc3cb5f85c291f73ac8e367aa930 (HEAD -&gt; dev)</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Mon Aug 23 13:38:02 2021 +0800</span><br><span class="line"></span><br><span class="line">    2nd commit</span><br><span class="line"></span><br><span class="line">commit 63a64804613dbfaa16cfc5c7fb320b501f539d75 (master)</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Mon Aug 23 08:34:07 2021 +0800</span><br><span class="line"></span><br><span class="line">    1st commit</span><br></pre></td></tr></table></figure>
+
+<p>切换到master分支，先查看.git文件，进行分支合并</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-demo3</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-DEMO3\.GIT</span><br><span class="line">│  COMMIT_EDITMSG</span><br><span class="line">│  config</span><br><span class="line">│  description</span><br><span class="line">│  HEAD</span><br><span class="line">│  index</span><br><span class="line">│  packed-refs</span><br><span class="line">│</span><br><span class="line">├─hooks</span><br><span class="line">│      applypatch-msg.sample</span><br><span class="line">│      commit-msg.sample</span><br><span class="line">│      fsmonitor-watchman.sample</span><br><span class="line">│      post-update.sample</span><br><span class="line">│      pre-applypatch.sample</span><br><span class="line">│      pre-commit.sample</span><br><span class="line">│      pre-merge-commit.sample</span><br><span class="line">│      pre-push.sample</span><br><span class="line">│      pre-rebase.sample</span><br><span class="line">│      pre-receive.sample</span><br><span class="line">│      prepare-commit-msg.sample</span><br><span class="line">│      push-to-checkout.sample</span><br><span class="line">│      update.sample</span><br><span class="line">│</span><br><span class="line">├─info</span><br><span class="line">│      exclude</span><br><span class="line">│      refs</span><br><span class="line">│</span><br><span class="line">├─logs</span><br><span class="line">│  │  HEAD</span><br><span class="line">│  │</span><br><span class="line">│  └─refs</span><br><span class="line">│      └─heads</span><br><span class="line">│              dev</span><br><span class="line">│              master</span><br><span class="line">│</span><br><span class="line">├─objects</span><br><span class="line">│  ├─18</span><br><span class="line">│  │      0cf8328022becee9aaa2577a8f84ea2b9f3827</span><br><span class="line">│  │</span><br><span class="line">│  ├─59</span><br><span class="line">│  │      6b3cd55b27dc3cb5f85c291f73ac8e367aa930</span><br><span class="line">│  │</span><br><span class="line">│  ├─ae</span><br><span class="line">│  │      3b0c9016b70ff7a211370616236c14571b7f0c</span><br><span class="line">│  │</span><br><span class="line">│  ├─info</span><br><span class="line">│  │      commit-graph</span><br><span class="line">│  │      packs</span><br><span class="line">│  │</span><br><span class="line">│  └─pack</span><br><span class="line">│          pack-b9d4bdcbfa833a54a35bc737eaba5f5088f6d956.idx</span><br><span class="line">│          pack-b9d4bdcbfa833a54a35bc737eaba5f5088f6d956.pack</span><br><span class="line">│</span><br><span class="line">└─refs</span><br><span class="line">    ├─heads</span><br><span class="line">    │      dev</span><br><span class="line">    │</span><br><span class="line">    └─tags</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git merge dev</span></span><br><span class="line">Updating 63a6480..596b3cd</span><br><span class="line">Fast-forward</span><br><span class="line"> test2.txt | 1 +</span><br><span class="line"> 1 file changed, 1 insertion(+)</span><br><span class="line"> create mode 100644 test2.txt</span><br></pre></td></tr></table></figure>
+
+<p><code>Updating 63a6480..596b3cd</code>：把指针从63a6480，指向596b3cd</p>
+<p>合并后查看.git文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-demo3</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-DEMO3\.GIT</span><br><span class="line">│  COMMIT_EDITMSG</span><br><span class="line">│  config</span><br><span class="line">│  description</span><br><span class="line">│  HEAD</span><br><span class="line">│  index</span><br><span class="line">│  ORIG_HEAD   #新增</span><br><span class="line">│  packed-refs</span><br><span class="line">│</span><br><span class="line">├─hooks</span><br><span class="line">│      applypatch-msg.sample</span><br><span class="line">│      commit-msg.sample</span><br><span class="line">│      fsmonitor-watchman.sample</span><br><span class="line">│      post-update.sample</span><br><span class="line">│      pre-applypatch.sample</span><br><span class="line">│      pre-commit.sample</span><br><span class="line">│      pre-merge-commit.sample</span><br><span class="line">│      pre-push.sample</span><br><span class="line">│      pre-rebase.sample</span><br><span class="line">│      pre-receive.sample</span><br><span class="line">│      prepare-commit-msg.sample</span><br><span class="line">│      push-to-checkout.sample</span><br><span class="line">│      update.sample</span><br><span class="line">│</span><br><span class="line">├─info</span><br><span class="line">│      exclude</span><br><span class="line">│      refs</span><br><span class="line">│</span><br><span class="line">├─logs</span><br><span class="line">│  │  HEAD</span><br><span class="line">│  │</span><br><span class="line">│  └─refs</span><br><span class="line">│      └─heads</span><br><span class="line">│              dev</span><br><span class="line">│              master</span><br><span class="line">│</span><br><span class="line">├─objects</span><br><span class="line">│  ├─18</span><br><span class="line">│  │      0cf8328022becee9aaa2577a8f84ea2b9f3827</span><br><span class="line">│  │</span><br><span class="line">│  ├─59</span><br><span class="line">│  │      6b3cd55b27dc3cb5f85c291f73ac8e367aa930</span><br><span class="line">│  │</span><br><span class="line">│  ├─ae</span><br><span class="line">│  │      3b0c9016b70ff7a211370616236c14571b7f0c</span><br><span class="line">│  │</span><br><span class="line">│  ├─info</span><br><span class="line">│  │      commit-graph</span><br><span class="line">│  │      packs</span><br><span class="line">│  │</span><br><span class="line">│  └─pack</span><br><span class="line">│          pack-b9d4bdcbfa833a54a35bc737eaba5f5088f6d956.idx</span><br><span class="line">│          pack-b9d4bdcbfa833a54a35bc737eaba5f5088f6d956.pack</span><br><span class="line">│</span><br><span class="line">└─refs</span><br><span class="line">    ├─heads</span><br><span class="line">    │      dev</span><br><span class="line">    │      master</span><br><span class="line">    │</span><br><span class="line">    └─tags</span><br></pre></td></tr></table></figure>
+
+<p>分别查看HEAD与ORIG_HEAD</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> cat .git/HEAD</span></span><br><span class="line">ref: refs/heads/master</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> cat .git/refs/heads/master</span></span><br><span class="line">596b3cd55b27dc3cb5f85c291f73ac8e367aa930</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> cat .git/ORIG_HEAD</span></span><br><span class="line">63a64804613dbfaa16cfc5c7fb320b501f539d75</span><br></pre></td></tr></table></figure>
+
+<p>ORIG_HEAD指向前一次commit，git在进行版本控制时，认为merge是比较危险的操作，所以提供了上一次的HEAD指向，以便于进行回滚操作</p>
+<p>回滚演示：将master回滚到未merge前的状态</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git reset ORIG_HEAD</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git status</span></span><br><span class="line">On branch master</span><br><span class="line">Untracked files:</span><br><span class="line">  (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)</span><br><span class="line">        test2.txt</span><br><span class="line"></span><br><span class="line">nothing added to commit but untracked files present (use &quot;git add&quot; to track)</span><br></pre></td></tr></table></figure>
+
+<p>在此种状态下不能立即切换到dev分支,需要先对当前回滚产生的test2.txt进行操作</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout dev</span></span><br><span class="line">error: The following untracked working tree files would be overwritten by checkout:</span><br><span class="line">        test2.txt</span><br><span class="line">Please move or remove them before you switch branches.</span><br><span class="line">Aborting</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> rm -rf test2.txt</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git status</span></span><br><span class="line">On branch master</span><br><span class="line">nothing to commit, working tree clean</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout dev</span></span><br><span class="line">Switched to branch &#x27;dev&#x27;</span><br></pre></td></tr></table></figure>
+
+<h3 id="14-3-way-merge"><a href="#14-3-way-merge" class="headerlink" title="14. 3 way merge"></a>14. 3 way merge</h3><h4 id="14-1-无冲突的merge"><a href="#14-1-无冲突的merge" class="headerlink" title="14.1 无冲突的merge"></a>14.1 无冲突的merge</h4><p>在开发时，如果master分支上有人进行了一次commit</p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108231513724.png" alt="image-20210823151348518"></p>
+<ol>
+<li><p>在dev分支查看当前提交情况</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (dev)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">log</span></span></span><br><span class="line">commit 596b3cd55b27dc3cb5f85c291f73ac8e367aa930 (HEAD -&gt; dev)</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Mon Aug 23 13:38:02 2021 +0800</span><br><span class="line"></span><br><span class="line">    2nd commit</span><br><span class="line"></span><br><span class="line">commit 63a64804613dbfaa16cfc5c7fb320b501f539d75 (master)</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Mon Aug 23 08:34:07 2021 +0800</span><br><span class="line"></span><br><span class="line">    1st commit</span><br></pre></td></tr></table></figure>
+
+<p>dev超前于master分支一次提交</p>
+</li>
+<li><p>切换到master分支进行一次提交，模拟描述的情况</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (dev)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout master</span></span><br><span class="line">Switched to branch &#x27;master&#x27;</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> <span class="string">&#x27;test3&#x27;</span> &gt; test3.txt</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git add test3.txt</span></span><br><span class="line">warning: LF will be replaced by CRLF in test3.txt.</span><br><span class="line">The file will have its original line endings in your working directory</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git commit -m <span class="string">&#x27;3rd commit&#x27;</span></span></span><br><span class="line">[master ee44067] 3rd commit</span><br><span class="line"> 1 file changed, 1 insertion(+)</span><br><span class="line"> create mode 100644 test3.txt</span><br><span class="line"> </span><br><span class="line"> xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">log</span></span></span><br><span class="line">commit ee44067f519231c20405f26c9a9fbef7c45e296a (HEAD -&gt; master)</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Mon Aug 23 14:23:08 2021 +0800</span><br><span class="line"></span><br><span class="line">    3rd commit</span><br><span class="line"></span><br><span class="line">commit 63a64804613dbfaa16cfc5c7fb320b501f539d75</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Mon Aug 23 08:34:07 2021 +0800</span><br><span class="line"></span><br><span class="line">    1st commit</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>进行<code>git merge</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git merge dev</span></span><br><span class="line">Merge made by the &#x27;recursive&#x27; strategy.</span><br><span class="line"> test2.txt | 1 +</span><br><span class="line"> 1 file changed, 1 insertion(+)</span><br><span class="line"> create mode 100644 test2.txt</span><br></pre></td></tr></table></figure>
+
+<p>此时会进入一个编辑器，要求输入commit信息</p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108231432493.png" alt="image-20210823143245060"></p>
+<p>查看当前提交记录</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">log</span></span></span><br><span class="line">commit 2040a9926e6c3f6647fbae96b067fa9ac4d1caac (HEAD -&gt; master)</span><br><span class="line">Merge: ee44067 596b3cd</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Mon Aug 23 14:31:42 2021 +0800</span><br><span class="line"></span><br><span class="line">    Merge branch &#x27;dev&#x27;</span><br><span class="line"></span><br><span class="line">commit ee44067f519231c20405f26c9a9fbef7c45e296a</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Mon Aug 23 14:23:08 2021 +0800</span><br><span class="line"></span><br><span class="line">    3rd commit</span><br><span class="line"></span><br><span class="line">commit 596b3cd55b27dc3cb5f85c291f73ac8e367aa930 (dev)</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Mon Aug 23 13:38:02 2021 +0800</span><br><span class="line"></span><br><span class="line">    2nd commit</span><br><span class="line"></span><br><span class="line">commit 63a64804613dbfaa16cfc5c7fb320b501f539d75</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Mon Aug 23 08:34:07 2021 +0800</span><br><span class="line"></span><br><span class="line">    1st commit</span><br></pre></td></tr></table></figure>
+
+<p>此时commit状态如下：新的merge commit比较特殊，指向两个parent</p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108231450145.png" alt="image-20210823145013674"></p>
+<p>验证如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -p 2040a9</span></span><br><span class="line">tree 1838144278c4bdebda77473c8b269f173d7c5122</span><br><span class="line">parent ee44067f519231c20405f26c9a9fbef7c45e296a</span><br><span class="line">parent 596b3cd55b27dc3cb5f85c291f73ac8e367aa930</span><br><span class="line">author xiongzhuo &lt;xiongzhuo@outlook.com&gt; 1629700302 +0800</span><br><span class="line">committer xiongzhuo &lt;xiongzhuo@outlook.com&gt; 1629700302 +0800</span><br><span class="line"></span><br><span class="line">Merge branch &#x27;dev&#x27;</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> cat .git/refs/heads/dev</span></span><br><span class="line">596b3cd55b27dc3cb5f85c291f73ac8e367aa930</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> cat .git/ORIG_HEAD</span></span><br><span class="line">ee44067f519231c20405f26c9a9fbef7c45e296a</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo3 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> cat .git/refs/heads/master</span></span><br><span class="line">2040a9926e6c3f6647fbae96b067fa9ac4d1caac</span><br></pre></td></tr></table></figure>
+
+<p>此时状态</p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108231512858.png" alt="image-20210823151244631"></p>
+</li>
+</ol>
+<h4 id="14-2-带冲突的3-way-merge"><a href="#14-2-带冲突的3-way-merge" class="headerlink" title="14.2  带冲突的3 way merge"></a>14.2  带冲突的3 way merge</h4><p>上述merge时所修改的文件不是同一个，如果修改的是同一个文件，则需要解决冲突</p>
+<p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108231524818.png" alt="image-20210823152448688"></p>
+<p><strong>初始化一个新的代码仓库进行测试</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4</span><br><span class="line"><span class="meta">$</span><span class="bash"> git init</span></span><br><span class="line">Initialized empty Git repository in C:/Files/git-demo4/.git/</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> ls</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> <span class="string">&#x27;test&#x27;</span>&gt;test.txt</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git add test.txt</span></span><br><span class="line">warning: LF will be replaced by CRLF in test.txt.</span><br><span class="line">The file will have its original line endings in your working directory</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git commit -m <span class="string">&#x27;1st commit&#x27;</span></span></span><br><span class="line">[master (root-commit) 300e689] 1st commit</span><br><span class="line"> 1 file changed, 1 insertion(+)</span><br><span class="line"> create mode 100644 test.txt</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout -b dev</span></span><br><span class="line">Switched to a new branch &#x27;dev&#x27;</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (dev)</span><br><span class="line"><span class="meta">$</span><span class="bash"> vim test.txt</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (dev)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git add test.txt</span></span><br><span class="line">warning: LF will be replaced by CRLF in test.txt.</span><br><span class="line">The file will have its original line endings in your working directory</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (dev)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git commit -m <span class="string">&#x27;2nd commit&#x27;</span></span></span><br><span class="line">[dev fd44315] 2nd commit</span><br><span class="line"> 1 file changed, 1 insertion(+)</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (dev)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout master</span></span><br><span class="line">Switched to branch &#x27;master&#x27;</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> vim test.txt</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git add test.txt</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git commit -m <span class="string">&#x27;3rd commit&#x27;</span></span></span><br><span class="line">[master e5cdf78] 3rd commit</span><br><span class="line"> 1 file changed, 1 insertion(+)</span><br></pre></td></tr></table></figure>
+
+<p><strong>查看master分支上的提交记录</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">log</span></span></span><br><span class="line">commit e5cdf7844b4ec84a213a743ae50ce7e75f050da5 (HEAD -&gt; master)</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Mon Aug 23 15:57:24 2021 +0800</span><br><span class="line"></span><br><span class="line">    3rd commit</span><br><span class="line"></span><br><span class="line">commit 300e689767c0e77cd950bc7f7562da1211d8a837</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Mon Aug 23 15:28:01 2021 +0800</span><br><span class="line"></span><br><span class="line">    1st commit</span><br></pre></td></tr></table></figure>
+
+<p><strong>切换到dev分支查看提交记录</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git checkout dev</span></span><br><span class="line">Switched to branch &#x27;dev&#x27;</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (dev)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">log</span></span></span><br><span class="line">commit fd443159acf34ca861ef84adcd8f4da5703e859b (HEAD -&gt; dev)</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Mon Aug 23 15:29:25 2021 +0800</span><br><span class="line"></span><br><span class="line">    2nd commit</span><br><span class="line"></span><br><span class="line">commit 300e689767c0e77cd950bc7f7562da1211d8a837</span><br><span class="line">Author: xiongzhuo &lt;xiongzhuo@outlook.com&gt;</span><br><span class="line">Date:   Mon Aug 23 15:28:01 2021 +0800</span><br><span class="line"></span><br><span class="line">    1st commit</span><br></pre></td></tr></table></figure>
+
+<p><strong>执行<code>git merge dev</code></strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git merge dev</span></span><br><span class="line">Auto-merging test.txt</span><br><span class="line">CONFLICT (content): Merge conflict in test.txt</span><br><span class="line">Automatic merge failed; fix conflicts and then commit the result.</span><br></pre></td></tr></table></figure>
+
+<p><code>Automatic merge failed; fix conflicts and then commit the result.</code>：自动merge失败，解决冲突之后提交结果</p>
+<p><strong>查看当前git状态</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master|MERGING)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git status</span></span><br><span class="line">On branch master</span><br><span class="line">You have unmerged paths.</span><br><span class="line">  (fix conflicts and run &quot;git commit&quot;)</span><br><span class="line">  (use &quot;git merge --abort&quot; to abort the merge)</span><br><span class="line"></span><br><span class="line">Unmerged paths:</span><br><span class="line">  (use &quot;git add &lt;file&gt;...&quot; to mark resolution)</span><br><span class="line">        both modified:   test.txt</span><br><span class="line"></span><br><span class="line">no changes added to commit (use &quot;git add&quot; and/or &quot;git commit -a&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>指出test.txt被共同修改了</p>
+<p><strong>查看文件内容</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master|MERGING)</span><br><span class="line"><span class="meta">$</span><span class="bash"> cat test.txt</span></span><br><span class="line">test</span><br><span class="line">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span><br><span class="line">add from master</span><br><span class="line">=======</span><br><span class="line">add from dev</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt;&gt;&gt;&gt;&gt; dev</span></span><br></pre></td></tr></table></figure>
+
+<p>列举出来了二者冲突的地方</p>
+<p><strong>查看当前索引区文件</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master|MERGING)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git ls-files -s</span></span><br><span class="line">100644 9daeafb9864cf43055ae93beb0afd6c7d144bfa4 1       test.txt</span><br><span class="line">100644 25059ba70062bc9ca5e6bc169a02b9e03928d383 2       test.txt</span><br><span class="line">100644 94032e5599cd953e1245bedddf18cc3ad6d5b297 3       test.txt</span><br></pre></td></tr></table></figure>
+
+<p>列出了test.txt的三个版本，查看这三个文件内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master|MERGING)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -p 9daeaf</span></span><br><span class="line">test</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master|MERGING)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -p 25059b</span></span><br><span class="line">test</span><br><span class="line">add from master</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master|MERGING)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -p 94032e</span></span><br><span class="line">test</span><br><span class="line">add from dev</span><br></pre></td></tr></table></figure>
+
+<p><strong>通过编辑器打开文件，解决冲突</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master|MERGING)</span><br><span class="line"><span class="meta">$</span><span class="bash"> vim test.txt</span></span><br></pre></td></tr></table></figure>
+
+<p>将修改添加到索引区</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master|MERGING)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git status</span></span><br><span class="line">On branch master</span><br><span class="line">You have unmerged paths.</span><br><span class="line">  (fix conflicts and run &quot;git commit&quot;)</span><br><span class="line">  (use &quot;git merge --abort&quot; to abort the merge)</span><br><span class="line"></span><br><span class="line">Unmerged paths:</span><br><span class="line">  (use &quot;git add &lt;file&gt;...&quot; to mark resolution)</span><br><span class="line">        both modified:   test.txt</span><br><span class="line"></span><br><span class="line">no changes added to commit (use &quot;git add&quot; and/or &quot;git commit -a&quot;)</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master|MERGING)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git add test.txt</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master|MERGING)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git ls-files -s</span></span><br><span class="line">100644 c638404ba9aedab9251326c3418b8948ad9344f4 0       test.txt</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master|MERGING)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -p c63840</span></span><br><span class="line">test</span><br><span class="line">add from master</span><br><span class="line">add from dev</span><br></pre></td></tr></table></figure>
+
+<p>修改完后此时git仍然显示test.txt文件是共同修改状态，我们需要进行add和commit就可以解决，而且此时索引区的文件又变回了一个，查看内容，正是我们修改过后的。表示此时冲突已经解决</p>
+<p>进行commit</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master|MERGING)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git commit -m <span class="string">&#x27;fix conflicts&#x27;</span></span></span><br><span class="line">[master e486395] fix conflicts</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo4 (master)</span><br><span class="line"><span class="meta">$</span></span><br></pre></td></tr></table></figure>
+
+<p>提交完之后，(master|MERGING)变成了(master)，完成了所有操作，结果也和普通的3way merge一样</p>
+<h3 id="16-git-rebase"><a href="#16-git-rebase" class="headerlink" title="16. git rebase"></a>16. git rebase</h3><p><img src="https://gitee.com/xiongzero/PicGo/raw/master/img/202108232108159.gif" alt="git rebase"></p>
+<p>当我们遇到需要分支合并的时候，而且此时想让合并的分支呈线性，可以再分支上使用<code>git reabse master</code>，将master分支上的最近一次提交同步到当前分支上，然后系统会改写分支上的commit，使分支上的commit在master之后，最后在使用<code>git merge</code>的时候就使得提交呈现出线性。不过要注意这种操作不适合团队开发使用，因为容易涉及到带冲突合并的问题。</p>
+<h3 id="17-标签tag"><a href="#17-标签tag" class="headerlink" title="17. 标签tag"></a>17. 标签tag</h3><p>标签在创建时，指向的是当前所在分支的最新一次commit</p>
+<ul>
+<li><p>创建tag</p>
+<ul>
+<li>git tag &lt;tag name&gt;：创建一个轻量级的tag(i.e. git tag v1.0)</li>
+<li>git tag -a  &lt;tag name&gt; -m &lt;tag message&gt;：创建一个拥有关联元数据的注解tag( email,date,etc…)(i.e. git tag -a v1.0 -m “version” )</li>
+<li>git tag -a &lt;tag name&gt; &lt;commit SHA1 value&gt; ：为以前的commit生成一个注解tag(i.e. git tag -a v1.0 c638404ba9aedab9251326c3418b8948ad9344f4)</li>
+</ul>
+</li>
+<li><p>tag列表</p>
+<p>git tag</p>
+</li>
+<li><p>删除tag</p>
+<p>git tag -d &lt;tag name&gt; (i.e. git tag -d v1.0)</p>
+</li>
+</ul>
+<p>①初始化代码仓库，为master分支的最近一次commit使用<code>git tag &lt;tag name&gt;</code>创建tag</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo5</span><br><span class="line"><span class="meta">$</span><span class="bash"> git init</span></span><br><span class="line">Initialized empty Git repository in C:/Files/git-demo5/.git/</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo5 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> <span class="string">&#x27;test1&#x27;</span> &gt; test1.txt</span></span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo5 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git add test1.txt</span></span><br><span class="line">warning: LF will be replaced by CRLF in test1.txt.</span><br><span class="line">The file will have its original line endings in your working directory</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo5 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git commit -m <span class="string">&#x27;1st commit&#x27;</span></span></span><br><span class="line">[master (root-commit) 8a7e377] 1st commit</span><br><span class="line"> 1 file changed, 1 insertion(+)</span><br><span class="line"> create mode 100644 test1.txt</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo5 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git tag v1.0.0</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-demo5</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git/refs /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-DEMO5\.GIT\REFS</span><br><span class="line">├─heads</span><br><span class="line">│      master</span><br><span class="line">│</span><br><span class="line">└─tags</span><br><span class="line">        v1.0.0</span><br></pre></td></tr></table></figure>
+
+<p>查看tag内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo5 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> cat .git/refs/tags/v1.0.0</span></span><br><span class="line">8a7e3772b496dcaa2c11ede0d3397371529fe0f1</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo5 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -t 8a7e</span></span><br><span class="line">commit</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo5 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -p 8a7e</span></span><br><span class="line">tree c0da834e42dcbf7b2b1c4a97925bef105d3863a3</span><br><span class="line">author xiongzhuo &lt;xiongzhuo@outlook.com&gt; 1629726589 +0800</span><br><span class="line">committer xiongzhuo &lt;xiongzhuo@outlook.com&gt; 1629726589 +0800</span><br><span class="line"></span><br><span class="line">1st commit</span><br></pre></td></tr></table></figure>
+
+<p>删除tag</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo5 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git tag -d v1.0.0</span></span><br><span class="line">Deleted tag &#x27;v1.0.0&#x27; (was 8a7e377)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-demo5</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git/refs /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-DEMO5\.GIT\REFS</span><br><span class="line">├─heads</span><br><span class="line">│      master</span><br><span class="line">│</span><br><span class="line">└─tags</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>②使用<code>git tag -a &lt;tag name&gt; -m &lt;tag message&gt;</code>创建tag</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo5 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git tag -a v1.0.0 -m <span class="string">&quot;version v1.0.0&quot;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>查看objects</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-demo5</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git/objects /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-DEMO5\.GIT\OBJECTS</span><br><span class="line">├─88</span><br><span class="line">│      1062f4ca137827d78a6f5e4e48996f3ed7722e #新增</span><br><span class="line">│</span><br><span class="line">├─8a</span><br><span class="line">│      7e3772b496dcaa2c11ede0d3397371529fe0f1</span><br><span class="line">│</span><br><span class="line">├─a5</span><br><span class="line">│      bce3fd2565d8f458555a0c6f42d0504a848bd5</span><br><span class="line">│</span><br><span class="line">├─c0</span><br><span class="line">│      da834e42dcbf7b2b1c4a97925bef105d3863a3</span><br><span class="line">│</span><br><span class="line">├─info</span><br><span class="line">└─pack</span><br></pre></td></tr></table></figure>
+
+<p>查看新增objects文件类型和文件内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo5 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -t 881062</span></span><br><span class="line">tag</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo5 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git cat-file -p 881062</span></span><br><span class="line">object 8a7e3772b496dcaa2c11ede0d3397371529fe0f1</span><br><span class="line">type commit</span><br><span class="line">tag v1.0.0</span><br><span class="line">tagger xiongzhuo &lt;xiongzhuo@outlook.com&gt; 1629727707 +0800</span><br><span class="line"></span><br><span class="line">version v1.0.0</span><br></pre></td></tr></table></figure>
+
+<p>查看refs</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-demo5</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git/refs /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-DEMO5\.GIT\REFS</span><br><span class="line">├─heads</span><br><span class="line">│      master</span><br><span class="line">│</span><br><span class="line">└─tags</span><br><span class="line">        v1.0.0  #新增</span><br></pre></td></tr></table></figure>
+
+<p>删除tag</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo5 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git tag -d v1.0.0</span></span><br><span class="line">Deleted tag &#x27;v1.0.0&#x27; (was 881062f)</span><br></pre></td></tr></table></figure>
+
+<p>查看refs，标签被删除</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-demo5</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git/refs /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-DEMO5\.GIT\REFS</span><br><span class="line">├─heads</span><br><span class="line">│      master</span><br><span class="line">│</span><br><span class="line">└─tags</span><br></pre></td></tr></table></figure>
+
+<p>查看objects，tag对象未被删除</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-demo5</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git/objects /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-DEMO5\.GIT\OBJECTS</span><br><span class="line">├─88</span><br><span class="line">│      1062f4ca137827d78a6f5e4e48996f3ed7722e #tag对象未被删除，产生垃圾对象</span><br><span class="line">│</span><br><span class="line">├─8a</span><br><span class="line">│      7e3772b496dcaa2c11ede0d3397371529fe0f1</span><br><span class="line">│</span><br><span class="line">├─a5</span><br><span class="line">│      bce3fd2565d8f458555a0c6f42d0504a848bd5</span><br><span class="line">│</span><br><span class="line">├─c0</span><br><span class="line">│      da834e42dcbf7b2b1c4a97925bef105d3863a3</span><br><span class="line">│</span><br><span class="line">├─info</span><br><span class="line">└─pack</span><br></pre></td></tr></table></figure>
+
+<p>③使用<code>git tag -a &lt;tag name&gt; &lt;commit SHA1 value&gt;</code>创建tag</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo5 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git tag -a v1.0.0 8a7e37 -m <span class="string">&quot;version 1&quot;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>查看objects</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-demo5</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git/objects /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-DEMO5\.GIT\OBJECTS</span><br><span class="line">├─88</span><br><span class="line">│      1062f4ca137827d78a6f5e4e48996f3ed7722e</span><br><span class="line">│</span><br><span class="line">├─8a</span><br><span class="line">│      7e3772b496dcaa2c11ede0d3397371529fe0f1</span><br><span class="line">│</span><br><span class="line">├─a5</span><br><span class="line">│      bce3fd2565d8f458555a0c6f42d0504a848bd5</span><br><span class="line">│</span><br><span class="line">├─c0</span><br><span class="line">│      da834e42dcbf7b2b1c4a97925bef105d3863a3</span><br><span class="line">│</span><br><span class="line">├─ec</span><br><span class="line">│      1fd8c3998b32051be0c19affdd49c20e4938fe  #新增tag</span><br><span class="line">│</span><br><span class="line">├─info</span><br><span class="line">└─pack</span><br></pre></td></tr></table></figure>
+
+<p>虽然名字一样，但是并未使用之前的tag对象，因为在生成tag对象时里面有时间戳</p>
+<p>使用<code>git fsck</code>可以检测出垃圾tag</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo5 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git fsck</span></span><br><span class="line">Checking object directories: 100% (256/256), done.</span><br><span class="line">dangling tag 881062f4ca137827d78a6f5e4e48996f3ed7722e</span><br><span class="line"></span><br><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo5 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git prune</span></span><br></pre></td></tr></table></figure>
+
+<p>使用<code>git prune </code>可以进行垃圾清理</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xiong@Surface-pro6 MINGW64 /c/Files/git-demo5 (master)</span><br><span class="line"><span class="meta">$</span><span class="bash"> git prune</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">xiong@SURFACE-PRO6 C:\Files\git-demo5</span><br><span class="line"><span class="meta">$</span><span class="bash"> tree .git/objects /f</span></span><br><span class="line">卷 Local Disk 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 C0000100 F296:2801</span><br><span class="line">C:\FILES\GIT-DEMO5\.GIT\OBJECTS</span><br><span class="line">├─8a</span><br><span class="line">│      7e3772b496dcaa2c11ede0d3397371529fe0f1</span><br><span class="line">│</span><br><span class="line">├─a5</span><br><span class="line">│      bce3fd2565d8f458555a0c6f42d0504a848bd5</span><br><span class="line">│</span><br><span class="line">├─c0</span><br><span class="line">│      da834e42dcbf7b2b1c4a97925bef105d3863a3</span><br><span class="line">│</span><br><span class="line">├─ec</span><br><span class="line">│      1fd8c3998b32051be0c19affdd49c20e4938fe</span><br><span class="line">│</span><br><span class="line">├─info</span><br><span class="line">└─pack</span><br></pre></td></tr></table></figure>
+
+<h3 id="18-本地分支和远程分支"><a href="#18-本地分支和远程分支" class="headerlink" title="18. 本地分支和远程分支"></a>18. 本地分支和远程分支</h3><p>新建文件夹，将远程仓库克隆到本地</p>
+<h3 id="19-git-fetch-amp-git-pull"><a href="#19-git-fetch-amp-git-pull" class="headerlink" title="19. git fetch &amp; git pull"></a>19. git fetch &amp; git pull</h3><h3 id="20-fetch-head"><a href="#20-fetch-head" class="headerlink" title="20. fetch_head"></a>20. fetch_head</h3><h3 id="21-git-pull"><a href="#21-git-pull" class="headerlink" title="21. git pull"></a>21. git pull</h3><h3 id="22-本地git-hook"><a href="#22-本地git-hook" class="headerlink" title="22. 本地git hook"></a>22. 本地git hook</h3><h3 id="23-pre-commit钩子"><a href="#23-pre-commit钩子" class="headerlink" title="23. pre-commit钩子"></a>23. pre-commit钩子</h3><h3 id="24-git-hook和python"><a href="#24-git-hook和python" class="headerlink" title="24. git hook和python"></a>24. git hook和python</h3>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.JPG" alt="软糖豆人 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.JPG" alt="软糖豆人 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+          <span class="icon">
+            <i class="fab fa-weixin"></i>
+          </span>
+
+          <span class="label">WeChat</span>
+        </a>
+      </div>
+
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/atom.xml">
+          <span class="icon">
+            <i class="fa fa-rss"></i>
+          </span>
+
+          <span class="label">RSS</span>
+        </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Git/" rel="tag"># Git</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/09/17/Git%E5%8E%9F%E7%90%86%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/" rel="prev" title="Git原理(01)">
+                  <i class="fa fa-chevron-left"></i> Git原理(01)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/09/17/Git%E5%8E%9F%E7%90%86%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D3/" rel="next" title="Git原理(03)">
+                  Git原理(03) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="SOHUCS"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">软糖豆人</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">543k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">8:14</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdn.jsdelivr.net/npm/ribbon.js@1.0.2/dist/ribbon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <script>
+  NexT.utils.loadComments('#SOHUCS', () => {
+    NexT.utils.getScript('https://changyan.sohu.com/upload/changyan.js', () => {
+      window.changyan.api.config({
+        appid: 'cyvkmiP62',
+        conf : 'f835963bde21c00f5de8da387f64e40a'
+      });
+    });
+  });
+  </script>
+  <script src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
